@@ -11,7 +11,7 @@
   branch = "master"
   name = "github.com/philips-software/go-hsdp-api"
   packages = ["logging"]
-  revision = "54d455b5e43ea8e946211b178f43e2a3912d99fe"
+  revision = "c1b0c8bdba759cbd63df801cd4e2a1d242fe470b"
 
 [[projects]]
   name = "github.com/philips-software/go-hsdp-signer"
