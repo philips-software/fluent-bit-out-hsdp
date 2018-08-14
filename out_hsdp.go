@@ -137,13 +137,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 	fmt.Printf("[out-hsdp] flushing %d resources\n", len(resources))
 
 	_, err := client.StoreResources(resources, len(resources))
-	// Iterate Records
 
-	// Return options:
-	//
-	// output.FLB_OK    = data have been processed.
-	// output.FLB_ERROR = unrecoverable error, do not try this again.
-	// output.FLB_RETRY = retry to flush later.
 	if err != nil {
 		fmt.Printf("[out-hsdp] error: %v\n", err)
 		return output.FLB_ERROR
@@ -165,29 +159,70 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 			m[k.(string)] = v
 		}
 	}
+	id, _ := uuid.V4()
+	transactionID, _ := uuid.V4()
+
+	serverName := "fluent-bit"
+	if val, ok := m["server_name"].(string); ok && val != "" {
+		serverName = val
+		delete(m, "server_name")
+	}
+	appInstance := "fluent-bit"
+	if val, ok := m["app_instance"].(string); ok && val != "" {
+		appInstance = val
+		delete(m, "app_instance")
+	}
+	appName := "fluent-bit"
+	if val, ok := m["app_name"].(string); ok && val != "" {
+		appName = val
+		delete(m, "app_name")
+	}
+	appVersion := "1.0"
+	if val, ok := m["app_version"].(string); ok && val != "" {
+		appVersion = val
+		delete(m, "app_version")
+	}
+	component := "fluent-bit"
+	if val, ok := m["component"].(string); ok && val != "" {
+		component = val
+		delete(m, "component")
+	}
+	severity := "Informational"
+	if val, ok := m["severity"].(string); ok && val != "" {
+		severity = val
+		delete(m, "severity")
+	}
+	category := "TraceLog"
+	if val, ok := m["category"].(string); ok && val != "" {
+		category = val
+		delete(m, "category")
+	}
+	serviceName := "fluent-bit"
+	if val, ok := m["service_name"].(string); ok && val != "" {
+		serviceName = val
+		delete(m, "service_name")
+	}
+	originatingUser := "fluent-bit"
+	if val, ok := m["originating_user"].(string); ok && val != "" {
+		originatingUser = val
+		delete(m, "originating_user")
+	}
+
 	msg, err := json.Marshal(m)
 	if err != nil {
 		return nil, fmt.Errorf("error creating message for hsdp-logging: %v", err)
 	}
-	id, _ := uuid.V4()
-	transactionID, _ := uuid.V4()
-	serverName := "fluent-bit"
-	if sn := m["host"].(string); sn != "" {
-		serverName = sn
-
-	}
-
 	return &logging.Resource{
 		ID:                  id.String(),
-		Severity:            "INFO",
-		ApplicationInstance: "fluent-bit",
-		ApplicationName:     "fluent-bit",
-		OriginatingUser:     "fluent-bit",
-		Category:            "TRACELOG",
-		Component:           "fluent-bit",
-		ApplicationVersion:  "1.0",
+		Severity:            severity,
+		ApplicationInstance: appInstance,
+		ApplicationName:     appName,
+		OriginatingUser:     originatingUser,
+		Category:            category,
+		Component:           component,
+		ApplicationVersion:  appVersion,
 		ServerName:          serverName,
-		ServiceName:         "fluent-bit",
+		ServiceName:         serviceName,
 		EventID:             "1",
 		TransactionID:       transactionID.String(),
 		LogTime:             timestamp.UTC().Format(logging.LogTimeFormat),
