@@ -1,0 +1,10 @@
+*.env
+docs/api/site
+.DS_Store
+tools/*.png
+dist/*
+example/
+*.swp
+debug.test
+launch.json
+coverage.txt
