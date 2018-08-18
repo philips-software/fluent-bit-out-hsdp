@@ -30,6 +30,8 @@ table shows the mapping and the default value
 | service\_name      | service\_name       | fluent-bit    |
 | originating\_user  | originating\_user   | fluent-bit    |
 
+> If a field is mapped to a HSDP logging resource field it is removed from the log message dump
+
 The below filter definition shows an example of assigning fields
 
 ```python
@@ -39,6 +41,8 @@ The below filter definition shows an example of assigning fields
     Record server_name ${HOSTNAME}
     Record service_name Awesome_Tool
 ```
+
+> Remaining fields are rendered to a JSON hash and assigned to `LogData.Message`
 
 ## Maintainer
 
