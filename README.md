@@ -4,16 +4,45 @@ This plugin outputs HSDP logging events from fluent-bit.
 
 ### Configuration options
 
-| Key           | Description                                    | Default        |
-| --------------|------------------------------------------------|----------------|
-| Host          | The HSDP logging host |  |
-| SharedKey     | The Shared key for signing request  | |
-| SecretKey     | The Secret key for signing requests | |
-| ProductKey    | The Product key of your proposition | |
+| Key           | Description                         | Environment variable |
+| --------------|-------------------------------------|----------------------|
+| IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST |
+| SharedKey     | The Shared key for signing request  | HSDP\_SHARED\_KEY      |
+| SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      |
+| ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     |
+
+The configuration options may be specified via the environment as well.
+This is useful when running from inside Docker or other container environment.
+
+### Record field mapping to HSDP logging reource
+
+The plugin maps certain record fields to defined HSDP logging resource fields. The below
+table shows the mapping and the default value
+
+| Record field       | HSDP logging field  | Default value |
+|--------------------|---------------------|---------------|
+| server\_name       | serverName          | fluent-bit    |
+| app\_name          | applicationName     | fluent-bit    |
+| app\_instance      | applicationInstance | fluent-bit    |
+| app\_version       | applicationVersion  | 1.0           |
+| category           | category            | Tracelog      |
+| severity           | severity            | informational |
+| service\_name      | service\_name       | fluent-bit    |
+| originating\_user  | originating\_user   | fluent-bit    |
+
+The below filter definition shows an example of assigning fields
+
+```python
+[FILTER]
+    Name record_modifier
+    Match *
+    Record server_name ${HOSTNAME}
+    Record service_name Awesome_Tool
+```
 
 ## Maintainer
 
-Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
+* Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
 ## License
 
