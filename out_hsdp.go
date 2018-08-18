@@ -147,6 +147,15 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 	return output.FLB_OK
 }
 
+func mapReturnDelete(m *map[string]interface{}, key, defaultValue string) string {
+	output := defaultValue
+	if val, ok := (*m)[key].(string); ok && val != "" {
+		output = val
+		delete(*m, key)
+	}
+	return output
+}
+
 func createResource(timestamp time.Time, tag string, record map[interface{}]interface{}) (*logging.Resource, error) {
 	m := make(map[string]interface{})
 	// convert timestamp to RFC3339Nano which is logstash format
@@ -164,56 +173,16 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	id, _ := uuid.V4()
 	transactionID, _ := uuid.V4()
 
-	serverName := "fluent-bit"
-	if val, ok := m["server_name"].(string); ok && val != "" {
-		serverName = val
-		delete(m, "server_name")
-	}
-	appInstance := "fluent-bit"
-	if val, ok := m["app_instance"].(string); ok && val != "" {
-		appInstance = val
-		delete(m, "app_instance")
-	}
-	appName := "fluent-bit"
-	if val, ok := m["app_name"].(string); ok && val != "" {
-		appName = val
-		delete(m, "app_name")
-	}
-	appVersion := "1.0"
-	if val, ok := m["app_version"].(string); ok && val != "" {
-		appVersion = val
-		delete(m, "app_version")
-	}
-	component := "fluent-bit"
-	if val, ok := m["component"].(string); ok && val != "" {
-		component = val
-		delete(m, "component")
-	}
-	severity := "Informational"
-	if val, ok := m["severity"].(string); ok && val != "" {
-		severity = val
-		delete(m, "severity")
-	}
-	category := "Tracelog"
-	if val, ok := m["category"].(string); ok && val != "" {
-		category = val
-		delete(m, "category")
-	}
-	serviceName := "fluent-bit"
-	if val, ok := m["service_name"].(string); ok && val != "" {
-		serviceName = val
-		delete(m, "service_name")
-	}
-	originatingUser := "fluent-bit"
-	if val, ok := m["originating_user"].(string); ok && val != "" {
-		originatingUser = val
-		delete(m, "originating_user")
-	}
-	eventID := "1"
-	if val, ok := m["event_id"].(string); ok && val != "" {
-		eventID = val
-		delete(m, "event_id")
-	}
+	serverName := mapReturnDelete(&m, "server_name", "fluent-bit")
+	appInstance := mapReturnDelete(&m, "app_instance", "fluent-bit")
+	appName := mapReturnDelete(&m, "app_name", "fluent-bit")
+	appVersion := mapReturnDelete(&m, "app_version", "1.0")
+	component := mapReturnDelete(&m, "component", "fluent-bit")
+	severity := mapReturnDelete(&m, "severity", "Informational")
+	category := mapReturnDelete(&m, "category", "Tracelog")
+	serviceName := mapReturnDelete(&m, "service_name", "fluent-bit")
+	originatingUser := mapReturnDelete(&m, "originating_user", "fluent-bit")
+	eventID := mapReturnDelete(&m, "event_id", "1")
 
 	msg, err := json.Marshal(m)
 	if err != nil {
