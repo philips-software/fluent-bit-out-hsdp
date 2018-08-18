@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 	"unsafe"
 
@@ -35,7 +36,7 @@ type Plugin interface {
 
 func (p *fluentPlugin) Environment(ctx unsafe.Pointer, key string) string {
 	// Environment variables have priority
-	envKey := "HSDP_" + key
+	envKey := "HSDP_" + strings.ToUpper(CamelCaseToUnderscore(key))
 	if value := os.Getenv(envKey); value != "" {
 		return value
 	}
@@ -70,7 +71,7 @@ func FLBPluginRegister(ctx unsafe.Pointer) int {
 
 //export FLBPluginInit
 func FLBPluginInit(ctx unsafe.Pointer) int {
-	host := plugin.Environment(ctx, "Host")
+	host := plugin.Environment(ctx, "IngestorHost")
 	sharedKey := plugin.Environment(ctx, "SharedKey")
 	secretKey := plugin.Environment(ctx, "SecretKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
