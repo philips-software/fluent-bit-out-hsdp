@@ -8,10 +8,16 @@
   revision = "c4a158a6e3a793166c6ecfa2d5c80d71eada8959"
 
 [[projects]]
+  name = "github.com/m4rw3r/uuid"
+  packages = ["."]
+  revision = "00c72d48d5aaaf3058e26d9641164c43ba239f33"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/philips-software/go-hsdp-api"
   packages = ["logging"]
-  revision = "c1b0c8bdba759cbd63df801cd4e2a1d242fe470b"
+  revision = "d97ac1de7ba22921c8f4c6bb82450cb20d72b8a9"
 
 [[projects]]
   name = "github.com/philips-software/go-hsdp-signer"
@@ -28,6 +34,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2eccadb84e74289d8afc3478e9180e0479dfdaf629b0110e9f61a4701a47d05e"
+  inputs-digest = "b6b2cfe80b4e0e5da53549296578e0ca08b43c46fc29c384d849bc27711a7fdb"
   solver-name = "gps-cdcl"
   solver-version = 1

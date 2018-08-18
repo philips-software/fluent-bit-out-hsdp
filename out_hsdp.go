@@ -23,6 +23,7 @@ var (
 
 type fluentPlugin struct{}
 
+// Plugin interface for verifying all methods are available
 type Plugin interface {
 	Environment(ctx unsafe.Pointer, key string) string
 	Unregister(ctx unsafe.Pointer)
