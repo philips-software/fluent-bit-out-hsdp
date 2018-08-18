@@ -194,7 +194,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		severity = val
 		delete(m, "severity")
 	}
-	category := "TraceLog"
+	category := "Tracelog"
 	if val, ok := m["category"].(string); ok && val != "" {
 		category = val
 		delete(m, "category")
@@ -208,6 +208,11 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	if val, ok := m["originating_user"].(string); ok && val != "" {
 		originatingUser = val
 		delete(m, "originating_user")
+	}
+	eventID := "1"
+	if val, ok := m["event_id"].(string); ok && val != "" {
+		eventID = val
+		delete(m, "event_id")
 	}
 
 	msg, err := json.Marshal(m)
@@ -225,7 +230,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		ApplicationVersion:  appVersion,
 		ServerName:          serverName,
 		ServiceName:         serviceName,
-		EventID:             "1",
+		EventID:             eventID,
 		TransactionID:       transactionID.String(),
 		LogTime:             timestamp.UTC().Format(logging.LogTimeFormat),
 		LogData:             logging.LogData{Message: string(msg)},
