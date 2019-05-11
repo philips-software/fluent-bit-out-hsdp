@@ -8,3 +8,4 @@ example/
 debug.test
 launch.json
 coverage.txt
+fluent-bit-go-hsdp-out

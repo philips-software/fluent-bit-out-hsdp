@@ -45,6 +45,12 @@ The below filter definition shows an example of assigning fields
 
 > Remaining fields are rendered to a JSON hash and assigned to `LogData.Message`
 
+## Building
+
+### Required
+
+* Go 1.11 or higher (modules)
+
 ## Maintainer
 
 * Andy Lo-A-Foe <andy.lo-a-foe@philips.com>

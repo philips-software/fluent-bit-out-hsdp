@@ -1,14 +1,17 @@
-FROM golang:1.10 AS builder
+FROM golang:1.12.5 AS builder
+LABEL maintainer="andy.lo-a-foe@philips.com"
 
-WORKDIR /go/src/github.com/loafoe/fluent-bit-go-hsdp-output/
+WORKDIR /out
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
 
-COPY .git Makefile Gopkg.* *.go /go/src/github.com/loafoe/fluent-bit-go-hsdp-output/
-RUN go get -u github.com/golang/dep/cmd/dep \
- && make dep all
+COPY . .
+RUN make all
 
 FROM fluent/fluent-bit:0.13.7
 
-COPY --from=builder /go/src/github.com/loafoe/fluent-bit-go-hsdp-output/out_hsdp.so /fluent-bit/bin/
+COPY --from=builder /out/out_hsdp.so /fluent-bit/bin/
 COPY *.conf /fluent-bit/etc/
 COPY start.sh /start.sh
 

@@ -1,4 +1,4 @@
-package main
+package hsdp
 
 import (
 	"C"
@@ -209,7 +209,4 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 //export FLBPluginExit
 func FLBPluginExit() int {
 	return output.FLB_OK
-}
-
-func main() {
 }
