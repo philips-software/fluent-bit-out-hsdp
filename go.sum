@@ -2,6 +2,10 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fluent/fluent-bit-go v0.0.0-20171103221316-c4a158a6e3a7 h1:mck6KdLX2FTh2/ZD27dK69ehWDZR4hCk+nLf+HvAbDk=
 github.com/fluent/fluent-bit-go v0.0.0-20171103221316-c4a158a6e3a7/go.mod h1:JVF1Nl3QOPpKTR8xDjhkm0xINYUX0z4XdJvOpIUF+Eo=
+github.com/fluent/fluent-bit-go v0.0.0-20190421043339-66fb080444ac h1:BXtS44TFyn6YeI4eTjM6dlccwByGFrhf1tke/GWiIHo=
+github.com/fluent/fluent-bit-go v0.0.0-20190421043339-66fb080444ac/go.mod h1:WQX+afhrekY9rGK+WT4xvKSlzmia9gDoLYu4GGYGASQ=
+github.com/fluent/fluent-bit-go v0.0.0-20190517223812-26f56f771962 h1:ofdj407ySTeqEjHk6XWxAm33I8WV3xwUMs+XZxDWDFM=
+github.com/fluent/fluent-bit-go v0.0.0-20190517223812-26f56f771962/go.mod h1:WQX+afhrekY9rGK+WT4xvKSlzmia9gDoLYu4GGYGASQ=
 github.com/jeffail/gabs v1.1.1 h1:CeIG5b81N2dWPtuK7IVVLxwYFxB0alTtfZ4rJZy1PS8=
 github.com/jeffail/gabs v1.1.1/go.mod h1:4qEQtV3py87F/jKMCb//ZQXJDjJBK5FU2kxdcgxb4iU=
 github.com/m4rw3r/uuid v1.0.0 h1:Gu+N0Arda2uc4fmkaDCy+9gopVICvPkwLoCMBiimIkk=
@@ -16,3 +20,5 @@ github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/ugorji/go v1.1.1 h1:gmervu+jDMvXTbcHQ0pd2wee85nEoE0BsVyEuzkfK8w=
 github.com/ugorji/go v1.1.1/go.mod h1:hnLbHMwcvSihnDhEfx2/BzKp2xb0Y+ErdfYcrs9tkJQ=
+github.com/ugorji/go v1.1.4 h1:j4s+tAvLfL3bZyefP2SEWmhBzmuIlH/eqNuPdFPgngw=
+github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=

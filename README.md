@@ -51,6 +51,12 @@ The below filter definition shows an example of assigning fields
 
 * Go 1.11 or higher (modules)
 
+# Testing with Docker
+
+```
+docker run --rm --env HSDP_PRODUCT_KEY=product-key-here --env HSDP_SECRET_KEY=secret-here --env HSDP_SHARED_KEY=shared-key-here -it fluent-bit-go-hsdp-out
+```
+
 ## Maintainer
 
 * Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
