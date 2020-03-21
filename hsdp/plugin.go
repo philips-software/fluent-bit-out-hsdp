@@ -20,6 +20,11 @@ var (
 	builddate string
 	plugin    Plugin = &fluentPlugin{}
 	client    *logging.Client
+	queue     chan logging.Resource
+)
+
+const (
+	batchSize = 25
 )
 
 type fluentPlugin struct{}
@@ -91,7 +96,39 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		return output.FLB_ERROR
 	}
 	fmt.Printf("[out-hsdp] build:%s version:%s\n", builddate, revision)
+
+	queue = make(chan logging.Resource)
+
+	go func() {
+		var count int
+		resources := make([]logging.Resource, batchSize)
+
+		for {
+			select {
+			case r := <-queue:
+				// append and send
+				resources[count] = r
+				count++
+				if count == batchSize {
+					flushResources(resources, count)
+					count = 0
+				}
+			case <-time.After(1 * time.Second):
+				if count > 0 {
+					flushResources(resources, count)
+					count = 0
+				}
+			}
+		}
+	}()
+
 	return output.FLB_OK
+}
+
+func flushResources(resources []logging.Resource, count int) error {
+	fmt.Printf("[out-hsdp] flushing %d resources\n", count)
+	_, err := client.StoreResources(resources, count)
+	return err
 }
 
 //export FLBPluginFlush
@@ -101,12 +138,9 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 	var ts interface{}
 	var record map[interface{}]interface{}
 
-	var resources []logging.Resource
-
 	// Create Fluent Bit decoder
 	dec := plugin.NewDecoder(data, int(length))
 
-	// TODO trigger store at 25 records
 	for {
 		// Extract Record
 		ret, ts, record = plugin.GetRecord(dec)
@@ -134,15 +168,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 			// error should be printed to console
 			continue
 		}
-		resources = append(resources, *js)
-	}
-	fmt.Printf("[out-hsdp] flushing %d resources\n", len(resources))
-
-	_, err := client.StoreResources(resources, len(resources))
-
-	if err != nil {
-		fmt.Printf("[out-hsdp] error: %v\n", err)
-		return output.FLB_ERROR
+		queue <- *js
 	}
 	return output.FLB_OK
 }
@@ -171,8 +197,8 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		case []interface{}, map[interface{}]interface{}:
 			m[k.(string)] = recursiveToJSON(v)
 		default:
-			fmt.Printf("[out-hsdp] skipping type %v for now\n", t)
-			//m[k.(string)] = v
+			//fmt.Printf("[out-hsdp] skipping type %v for now\n", t)
+			m[k.(string)] = v
 		}
 	}
 	id, _ := uuid.V4()
