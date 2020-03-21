@@ -197,7 +197,6 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		case []interface{}, map[interface{}]interface{}:
 			m[k.(string)] = recursiveToJSON(v)
 		default:
-			//fmt.Printf("[out-hsdp] skipping type %v for now\n", t)
 			m[k.(string)] = v
 		}
 	}

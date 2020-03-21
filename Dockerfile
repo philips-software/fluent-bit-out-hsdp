@@ -1,5 +1,4 @@
 FROM golang:1.14.1 AS builder
-LABEL maintainer="andy.lo-a-foe@philips.com"
 
 WORKDIR /out
 COPY go.mod .
@@ -10,6 +9,7 @@ COPY . .
 RUN make all
 
 FROM fluent/fluent-bit:1.3.11
+LABEL maintainer="andy.lo-a-foe@philips.com"
 
 COPY --from=builder /out/out_hsdp.so /fluent-bit/bin/
 COPY *.conf /fluent-bit/etc/

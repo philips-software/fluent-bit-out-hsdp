@@ -1,4 +1,4 @@
-# fluent-bit HSDP logging output plugin
+# fluent Bit HSDP logging output plugin
 
 This plugin outputs HSDP logging events from fluent-bit. 
 
@@ -14,7 +14,7 @@ This plugin outputs HSDP logging events from fluent-bit.
 The configuration options may be specified via the environment as well.
 This is useful when running from inside Docker or other container environment.
 
-### Record field mapping to HSDP logging reource
+### Record field mapping to HSDP logging resource
 
 The plugin maps certain record fields to defined HSDP logging resource fields. The below
 table shows the mapping and the default value
@@ -49,13 +49,19 @@ The below filter definition shows an example of assigning fields
 
 ### Required
 
-* Go 1.11 or higher (modules)
+* Go 1.14 or newer
 
 # Testing with Docker
 
+```shell
+docker run --rm \
+    --env HSDP_PRODUCT_KEY=product-key-here \
+    --env HSDP_SECRET_KEY=secret-here \
+    --env HSDP_SHARED_KEY=shared-key-here \
+    -it fluent-bit-go-hsdp-out
 ```
-docker run --rm --env HSDP_PRODUCT_KEY=product-key-here --env HSDP_SECRET_KEY=secret-here --env HSDP_SHARED_KEY=shared-key-here -it fluent-bit-go-hsdp-out
-```
+
+Above command will log CPU statistics every 5 seconds of the container image
 
 ## Maintainer
 
