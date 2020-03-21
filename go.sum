@@ -6,6 +6,8 @@ github.com/fluent/fluent-bit-go v0.0.0-20190421043339-66fb080444ac h1:BXtS44TFyn
 github.com/fluent/fluent-bit-go v0.0.0-20190421043339-66fb080444ac/go.mod h1:WQX+afhrekY9rGK+WT4xvKSlzmia9gDoLYu4GGYGASQ=
 github.com/fluent/fluent-bit-go v0.0.0-20190517223812-26f56f771962 h1:ofdj407ySTeqEjHk6XWxAm33I8WV3xwUMs+XZxDWDFM=
 github.com/fluent/fluent-bit-go v0.0.0-20190517223812-26f56f771962/go.mod h1:WQX+afhrekY9rGK+WT4xvKSlzmia9gDoLYu4GGYGASQ=
+github.com/fluent/fluent-bit-go v0.0.0-20200304012558-215d6804159a h1:ni2Qs4+h7Ps6bRPYJe7sF3MVQU1d8IXUTZBXFIegE7g=
+github.com/fluent/fluent-bit-go v0.0.0-20200304012558-215d6804159a/go.mod h1:WQX+afhrekY9rGK+WT4xvKSlzmia9gDoLYu4GGYGASQ=
 github.com/jeffail/gabs v1.1.1 h1:CeIG5b81N2dWPtuK7IVVLxwYFxB0alTtfZ4rJZy1PS8=
 github.com/jeffail/gabs v1.1.1/go.mod h1:4qEQtV3py87F/jKMCb//ZQXJDjJBK5FU2kxdcgxb4iU=
 github.com/m4rw3r/uuid v1.0.0 h1:Gu+N0Arda2uc4fmkaDCy+9gopVICvPkwLoCMBiimIkk=
