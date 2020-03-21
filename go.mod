@@ -1,4 +1,4 @@
-module github.com/loafoe/fluent-bit-out-hsdp
+module fluent-bit-out-hsdp
 
 go 1.14
 
