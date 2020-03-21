@@ -156,6 +156,40 @@ func mapReturnDelete(m *map[string]interface{}, key, defaultValue string) string
 	return output
 }
 
+type jsonArray []interface{}
+
+func (a jsonArray) Value() ([]byte, error) {
+	return json.Marshal(a)
+}
+
+type jsonMap map[string]interface{}
+
+func (m jsonMap) Value() ([]byte, error) {
+	return json.Marshal(m)
+}
+
+func recursiveToJSON(v interface{}) (r interface{}) {
+	switch v := v.(type) {
+	case []interface{}:
+		for i, e := range v {
+			v[i] = recursiveToJSON(e)
+		}
+		r = jsonArray(v)
+	case map[interface{}]interface{}:
+		newMap := make(map[string]interface{}, len(v))
+		for k, e := range v {
+			newMap[k.(string)] = recursiveToJSON(e)
+		}
+		r = jsonMap(newMap)
+	case []byte:
+		// Prevent base64 encoding
+		r = string(v)
+	default:
+		r = v
+	}
+	return
+}
+
 func createResource(timestamp time.Time, tag string, record map[interface{}]interface{}) (*logging.Resource, error) {
 	m := make(map[string]interface{})
 	// convert timestamp to RFC3339Nano which is logstash format
@@ -166,8 +200,13 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		case []byte:
 			// prevent encoding to base64
 			m[k.(string)] = string(t)
-		default:
+		case string:
 			m[k.(string)] = v
+		case []interface{}, map[interface{}]interface{}:
+			m[k.(string)] = recursiveToJSON(v)
+		default:
+			fmt.Printf("[out-hsdp] skipping type %v for now\n", t)
+			//m[k.(string)] = v
 		}
 	}
 	id, _ := uuid.V4()
