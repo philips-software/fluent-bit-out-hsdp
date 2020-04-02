@@ -80,6 +80,9 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	sharedKey := plugin.Environment(ctx, "SharedKey")
 	secretKey := plugin.Environment(ctx, "SecretKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
+	debug := plugin.Environment(ctx, "Debug")
+	debugLog := plugin.Environment(ctx, "DebugLog")
+
 	var err error
 
 	client, err = logging.NewClient(nil,
@@ -88,6 +91,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 			SharedSecret: secretKey,
 			ProductKey:   productKey,
 			BaseURL:      host,
+			Debug:        debug != "",
+			DebugLog:     debugLog,
 		})
 	if err != nil {
 		fmt.Printf("configuration errors: %v\n", err)
