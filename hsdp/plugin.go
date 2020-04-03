@@ -81,7 +81,6 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	secretKey := plugin.Environment(ctx, "SecretKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
-	debugLog := plugin.Environment(ctx, "DebugLog")
 
 	var err error
 
@@ -92,7 +91,6 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 			ProductKey:   productKey,
 			BaseURL:      host,
 			Debug:        debug != "",
-			DebugLog:     debugLog,
 		})
 	if err != nil {
 		fmt.Printf("configuration errors: %v\n", err)

@@ -15,8 +15,8 @@ github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgxpxOKII=
 github.com/m4rw3r/uuid v1.0.0 h1:Gu+N0Arda2uc4fmkaDCy+9gopVICvPkwLoCMBiimIkk=
 github.com/m4rw3r/uuid v1.0.0/go.mod h1:3WKANKNmGWB1YcSR844W90Bxlomjft18SqJUIBH7pqk=
-github.com/philips-software/go-hsdp-api v0.0.0-20200402203940-9e2ac6be4d52 h1:A81vC9NczwEJ80F3qnDXdNxfOlI9pmv2CcU7gYE74Jw=
-github.com/philips-software/go-hsdp-api v0.0.0-20200402203940-9e2ac6be4d52/go.mod h1:Rd8fIy69PYd8bMlgGxzqzIrvJwBV884fGFNYE2dOG3E=
+github.com/philips-software/go-hsdp-api v0.12.1-0.20200403094047-c47f3925e99b h1:npDQwVp26edfwasMU2C8V4lOdQ/06MvU2cdbTQvzOjI=
+github.com/philips-software/go-hsdp-api v0.12.1-0.20200403094047-c47f3925e99b/go.mod h1:Rd8fIy69PYd8bMlgGxzqzIrvJwBV884fGFNYE2dOG3E=
 github.com/philips-software/go-hsdp-signer v1.1.0 h1:7fYij8q7uCr2AOzO9g3X45FNB9tddFPnvR5WNLo3pD4=
 github.com/philips-software/go-hsdp-signer v1.1.0/go.mod h1:mtq3D20YNxHQ8e318ci9hVb3DW5Hlo30D3abN7VeqLM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
