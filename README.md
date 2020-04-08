@@ -10,14 +10,16 @@ This plugin outputs HSDP logging events from fluent-bit.
 | SharedKey     | The Shared key for signing request  | HSDP\_SHARED\_KEY      |
 | SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      |
 | ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     |
+| Debug         | Shows request details when set to true | HSDP\_DEBUG |
+| CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD |
 
-The configuration options may be specified via the environment as well.
+The configuration options can be specified via the environment as well.
 This is useful when running from inside Docker or other container environment.
 
 ### Record field mapping to HSDP logging resource
 
 The plugin maps certain record fields to defined HSDP logging resource fields. The below
-table shows the mapping and the default value
+table shows the mapping, and the default value.
 
 | Record field       | HSDP logging field  | Default value |
 |--------------------|---------------------|---------------|

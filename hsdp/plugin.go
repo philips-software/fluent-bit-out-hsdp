@@ -21,6 +21,7 @@ var (
 	plugin    Plugin = &fluentPlugin{}
 	client    *logging.Client
 	queue     chan logging.Resource
+	useCustomField bool
 )
 
 const (
@@ -81,8 +82,11 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	secretKey := plugin.Environment(ctx, "SecretKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
+	customField := plugin.Environment(ctx, "CustomField")
 
 	var err error
+
+	useCustomField = customField != "" // TODO: remove global
 
 	client, err = logging.NewClient(nil,
 		logging.Config{
