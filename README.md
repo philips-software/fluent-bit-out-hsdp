@@ -32,8 +32,10 @@ table shows the mapping, and the default value.
 | service\_name      | service\_name       | fluent-bit    |
 | originating\_user  | originating\_user   | fluent-bit    |
 | event\_id          | event\_id           | 1             |
+| transaction\_id    | transaction\_id     | random UUID   |
+| logdata\_message       | logData.Message     | field hash    |
 
-> If a field is mapped to a HSDP logging resource field it is removed from the log message dump
+> Fields mapped to a HSDP logging resource field will be removed from the log message dump
 
 The below filter definition shows an example of assigning fields
 
@@ -45,7 +47,7 @@ The below filter definition shows an example of assigning fields
     Record service_name Awesome_Tool
 ```
 
-> Remaining fields are rendered to a JSON hash and assigned to `LogData.Message`
+> Remaining fields will be rendered to a JSON hash and assigned to `logData.Message`
 
 ## Building
 

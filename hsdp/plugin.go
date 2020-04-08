@@ -208,8 +208,9 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		}
 	}
 	id, _ := uuid.V4()
-	transactionID, _ := uuid.V4()
+	generatedTransactionID, _ := uuid.V4()
 
+	transactionID := mapReturnDelete(&m, "transaction_id", generatedTransactionID.String())
 	serverName := mapReturnDelete(&m, "server_name", "fluent-bit")
 	appInstance := mapReturnDelete(&m, "app_instance", "fluent-bit")
 	appName := mapReturnDelete(&m, "app_name", "fluent-bit")
@@ -220,12 +221,16 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	serviceName := mapReturnDelete(&m, "service_name", "fluent-bit")
 	originatingUser := mapReturnDelete(&m, "originating_user", "fluent-bit")
 	eventID := mapReturnDelete(&m, "event_id", "1")
+	logMessage := mapReturnDelete(&m, "logdata_message", "")
 
 	msg, err := json.Marshal(m)
 	if err != nil {
 		return nil, fmt.Errorf("error creating message for hsdp-logging: %v", err)
 	}
-	return &logging.Resource{
+	if logMessage == "" {
+		logMessage = string(msg)
+	}
+	resource := &logging.Resource{
 		ID:                  id.String(),
 		Severity:            severity,
 		ApplicationInstance: appInstance,
@@ -237,10 +242,14 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		ServerName:          serverName,
 		ServiceName:         serviceName,
 		EventID:             eventID,
-		TransactionID:       transactionID.String(),
+		TransactionID:       transactionID,
 		LogTime:             timestamp.UTC().Format(logging.LogTimeFormat),
-		LogData:             logging.LogData{Message: string(msg)},
-	}, nil
+		LogData:             logging.LogData{Message: logMessage},
+	}
+	if useCustomField {
+		resource.Custom = msg
+	}
+	return resource, nil
 }
 
 //export FLBPluginExit
