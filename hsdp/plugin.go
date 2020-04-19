@@ -10,7 +10,7 @@ import (
 	"unsafe"
 
 	"github.com/fluent/fluent-bit-go/output"
-	"github.com/m4rw3r/uuid"
+	"github.com/google/uuid"
 	"github.com/philips-software/go-hsdp-api/logging"
 )
 
@@ -207,10 +207,13 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 			m[k.(string)] = v
 		}
 	}
-	id, _ := uuid.V4()
-	generatedTransactionID, _ := uuid.V4()
+	id, _ := uuid.NewRandom()
+	generatedTransactionID, _ := uuid.NewRandom()
 
 	transactionID := mapReturnDelete(&m, "transaction_id", generatedTransactionID.String())
+	if _, err := uuid.Parse(transactionID); err != nil { // validate
+			transactionID = generatedTransactionID.String()
+	}
 	serverName := mapReturnDelete(&m, "server_name", "fluent-bit")
 	appInstance := mapReturnDelete(&m, "app_instance", "fluent-bit")
 	appName := mapReturnDelete(&m, "app_name", "fluent-bit")
