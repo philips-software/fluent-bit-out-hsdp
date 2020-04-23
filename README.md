@@ -10,14 +10,16 @@ This plugin outputs HSDP logging events from fluent-bit.
 | SharedKey     | The Shared key for signing request  | HSDP\_SHARED\_KEY      |
 | SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      |
 | ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     |
+| Debug         | Shows request details when set to true | HSDP\_DEBUG |
+| CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD |
 
-The configuration options may be specified via the environment as well.
+The configuration options can be specified via the environment as well.
 This is useful when running from inside Docker or other container environment.
 
 ### Record field mapping to HSDP logging resource
 
 The plugin maps certain record fields to defined HSDP logging resource fields. The below
-table shows the mapping and the default value
+table shows the mapping, and the default value.
 
 | Record field       | HSDP logging field  | Default value |
 |--------------------|---------------------|---------------|
@@ -30,8 +32,10 @@ table shows the mapping and the default value
 | service\_name      | service\_name       | fluent-bit    |
 | originating\_user  | originating\_user   | fluent-bit    |
 | event\_id          | event\_id           | 1             |
+| transaction\_id    | transaction\_id     | random UUID   |
+| logdata\_message       | logData.Message     | field hash    |
 
-> If a field is mapped to a HSDP logging resource field it is removed from the log message dump
+> Fields mapped to a HSDP logging resource field will be removed from the log message dump
 
 The below filter definition shows an example of assigning fields
 
@@ -43,7 +47,7 @@ The below filter definition shows an example of assigning fields
     Record service_name Awesome_Tool
 ```
 
-> Remaining fields are rendered to a JSON hash and assigned to `LogData.Message`
+> Remaining fields will be rendered to a JSON hash and assigned to `logData.Message`
 
 ## Building
 

@@ -10,7 +10,7 @@ import (
 	"unsafe"
 
 	"github.com/fluent/fluent-bit-go/output"
-	"github.com/m4rw3r/uuid"
+	"github.com/google/uuid"
 	"github.com/philips-software/go-hsdp-api/logging"
 )
 
@@ -21,6 +21,7 @@ var (
 	plugin    Plugin = &fluentPlugin{}
 	client    *logging.Client
 	queue     chan logging.Resource
+	useCustomField bool
 )
 
 const (
@@ -81,8 +82,11 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	secretKey := plugin.Environment(ctx, "SecretKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
+	customField := plugin.Environment(ctx, "CustomField")
 
 	var err error
+
+	useCustomField = customField != "" // TODO: remove global
 
 	client, err = logging.NewClient(nil,
 		logging.Config{
@@ -203,9 +207,13 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 			m[k.(string)] = v
 		}
 	}
-	id, _ := uuid.V4()
-	transactionID, _ := uuid.V4()
+	id, _ := uuid.NewRandom()
+	generatedTransactionID, _ := uuid.NewRandom()
 
+	transactionID := mapReturnDelete(&m, "transaction_id", generatedTransactionID.String())
+	if _, err := uuid.Parse(transactionID); err != nil { // validate
+			transactionID = generatedTransactionID.String()
+	}
 	serverName := mapReturnDelete(&m, "server_name", "fluent-bit")
 	appInstance := mapReturnDelete(&m, "app_instance", "fluent-bit")
 	appName := mapReturnDelete(&m, "app_name", "fluent-bit")
@@ -216,12 +224,16 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	serviceName := mapReturnDelete(&m, "service_name", "fluent-bit")
 	originatingUser := mapReturnDelete(&m, "originating_user", "fluent-bit")
 	eventID := mapReturnDelete(&m, "event_id", "1")
+	logMessage := mapReturnDelete(&m, "logdata_message", "")
 
 	msg, err := json.Marshal(m)
 	if err != nil {
 		return nil, fmt.Errorf("error creating message for hsdp-logging: %v", err)
 	}
-	return &logging.Resource{
+	if logMessage == "" {
+		logMessage = string(msg)
+	}
+	resource := &logging.Resource{
 		ID:                  id.String(),
 		Severity:            severity,
 		ApplicationInstance: appInstance,
@@ -233,10 +245,14 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		ServerName:          serverName,
 		ServiceName:         serviceName,
 		EventID:             eventID,
-		TransactionID:       transactionID.String(),
+		TransactionID:       transactionID,
 		LogTime:             timestamp.UTC().Format(logging.LogTimeFormat),
-		LogData:             logging.LogData{Message: string(msg)},
-	}, nil
+		LogData:             logging.LogData{Message: logMessage},
+	}
+	if useCustomField {
+		resource.Custom = msg
+	}
+	return resource, nil
 }
 
 //export FLBPluginExit
