@@ -2,14 +2,14 @@
 
 # fluent bit HSDP logging output plugin
 
-This plugin outputs your logs to the HSDP Host Logging service. This is useful when your workloads are not running on Cloud foundry but you still want to utilize the central logging facilities of HSDP. 
+This plugin outputs your logs to the HSDP Host Logging service. This is useful when your workloads are not running on Cloud foundry, but you still want to utilize the central logging facilities of HSDP. 
 
-Fluent bit supports parsers and filters which allow you to convert unstructured data gathered from the Input interface into a structured one and also to alter existing structured data before ingesting them in HSDP logging.
+Fluent bit supports parser and filter plugin which can convert unstructured data gathered from the log Input interface into a structured one and to alter existing structured data before ingestion.
 
 [More on fluent-bit](https://fluentbit.io/documentation/0.14/getting_started/)
 
 # Configuration options
-The `fluent-bit.conf` configuration should include configure for the HSDP output plugin. Example:
+Your `fluent-bit.conf` file should include an entry like below to enable the plugin:
 
 ```
 [output]
@@ -21,7 +21,7 @@ The `fluent-bit.conf` configuration should include configure for the HSDP output
     ProductKey your7137-prod-42ae-uct0e-key00here71
 ```
 
-## Keys
+## Key description
 | Key           | Description                         | Environment variable |
 | --------------|-------------------------------------|----------------------|
 | IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST |
