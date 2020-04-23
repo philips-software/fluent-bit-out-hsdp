@@ -39,7 +39,7 @@ This is useful when running from inside Docker or other container environment. E
 The plugin maps certain record fields to defined HSDP logging resource fields. The below
 table shows the mapping, and the default value.
 
-| Record field       | HSDP logging field  | Default value | Coment |
+| Record field       | HSDP logging field  | Default value | Details |
 |--------------------|---------------------|---------------|-----------------------|
 | server\_name       | serverName          | fluent-bit    ||
 | app\_name          | applicationName     | fluent-bit    ||
