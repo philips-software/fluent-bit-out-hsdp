@@ -31,8 +31,9 @@ Your `fluent-bit.conf` file should include an entry like below to enable the plu
 | Debug         | Shows request details when set to true | HSDP\_DEBUG |
 | CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD |
 
-> The configuration options can be specified via the environment as well.
-This is useful when running from inside Docker or other container environment. Environment variables
+> The configuration options values can be specified via the environment as well.
+This is useful when running inside Docker or other container environment. Environment variable values have precedence 
+over those in configuration files.
 
 # Record field mapping to HSDP logging resource
 
