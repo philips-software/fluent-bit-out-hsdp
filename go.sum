@@ -14,10 +14,10 @@ github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135/go.mod h1:od
 github.com/google/uuid v1.1.1 h1:Gkbcsh/GbpXz7lPftLA3P6TYMwjCLYm83jiFQZF/3gY=
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgxpxOKII=
-github.com/philips-software/go-hsdp-api v0.13.0 h1:BtCR6eUct6+6KYIGJ7+PTFmkyQdtvuudXVXgP0dorUU=
-github.com/philips-software/go-hsdp-api v0.13.0/go.mod h1:5GTX1JQ6868dNjPCWm5TIPgW5MjvNsd/GdcjAERrCT4=
-github.com/philips-software/go-hsdp-signer v1.1.1-0.20200417110351-20ce3021c3ba h1:w3T8KnsMtPVAMgl4Qf/znYUGzsM2kysQPyA5JNptCqQ=
-github.com/philips-software/go-hsdp-signer v1.1.1-0.20200417110351-20ce3021c3ba/go.mod h1:/QehZ/+Aks2t1TFpjhF/7ZSB8PJIIJHzLc03rOqwLw0=
+github.com/philips-software/go-hsdp-api v0.14.0 h1:S+lzmOxffVrXY2nQBonFOuE5OVGMbmbKaj60peIGsvI=
+github.com/philips-software/go-hsdp-api v0.14.0/go.mod h1:uyEU+N8oFbif+K9HzoH5Vr0xgFvzzwjg22mAcRq88w8=
+github.com/philips-software/go-hsdp-signer v1.3.0 h1:Si1voDE/GHzthmxpasPdntbu8aUW6EYJfI6gHVf7BCc=
+github.com/philips-software/go-hsdp-signer v1.3.0/go.mod h1:/QehZ/+Aks2t1TFpjhF/7ZSB8PJIIJHzLc03rOqwLw0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
