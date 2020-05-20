@@ -21,6 +21,7 @@ var (
 	plugin    Plugin = &fluentPlugin{}
 	client    *logging.Client
 	queue     chan logging.Resource
+	status    chan int
 	useCustomField bool
 )
 
@@ -105,6 +106,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	fmt.Printf("[out-hsdp] build:%s version:%s\n", builddate, revision)
 
 	queue = make(chan logging.Resource)
+	status = make(chan int)
 
 	go func() {
 		var count int
@@ -117,12 +119,16 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				resources[count] = r
 				count++
 				if count == batchSize {
-					flushResources(resources, count)
+					if err := flushResources(resources, count); err != nil {
+						postError(err)
+					}
 					count = 0
 				}
 			case <-time.After(1 * time.Second):
 				if count > 0 {
-					flushResources(resources, count)
+					if err := flushResources(resources, count); err != nil {
+						postError(err)
+					}
 					count = 0
 				}
 			}
@@ -130,6 +136,18 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	}()
 
 	return output.FLB_OK
+}
+
+func postError(err error) {
+	switch err {
+	default: // Retry by default
+		status <- output.FLB_RETRY
+	}
+	return
+}
+
+func postOK() {
+	status <- output.FLB_OK
 }
 
 func flushResources(resources []logging.Resource, count int) error {
@@ -170,12 +188,17 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 		js, err := createResource(timeStamp, C.GoString(tag), record)
 		if err != nil {
 			fmt.Printf("%v\n", err)
-			// DO NOT RETURN HERE becase one message has an error when json is
+			// DO NOT RETURN HERE because one message has an error when json is
 			// generated, but a retry would fetch ALL messages again. instead an
 			// error should be printed to console
 			continue
 		}
 		queue <- *js
+	}
+	select {
+		case s := <- status:
+			return s
+		default:
 	}
 	return output.FLB_OK
 }
