@@ -6,5 +6,5 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fluent/fluent-bit-go v0.0.0-20200304012558-215d6804159a
 	github.com/google/uuid v1.1.1
-	github.com/philips-software/go-hsdp-api v0.14.0
+	github.com/philips-software/go-hsdp-api v0.15.0
 )

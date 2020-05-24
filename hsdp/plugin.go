@@ -20,8 +20,7 @@ var (
 	builddate string
 	plugin    Plugin = &fluentPlugin{}
 	client    *logging.Client
-	queue     chan logging.Resource
-	status    chan int
+	resources []logging.Resource
 	useCustomField bool
 )
 
@@ -37,7 +36,6 @@ type Plugin interface {
 	Unregister(ctx unsafe.Pointer)
 	GetRecord(dec *output.FLBDecoder) (ret int, ts interface{}, rec map[interface{}]interface{})
 	NewDecoder(data unsafe.Pointer, length int) *output.FLBDecoder
-	Send(values []logging.Resource) error
 	Exit(code int)
 }
 
@@ -64,11 +62,6 @@ func (p *fluentPlugin) NewDecoder(data unsafe.Pointer, length int) *output.FLBDe
 
 func (p *fluentPlugin) Exit(code int) {
 	os.Exit(code)
-}
-
-func (p *fluentPlugin) Send(values []logging.Resource) error {
-	// TODO
-	return nil
 }
 
 //export FLBPluginRegister
@@ -105,55 +98,60 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	}
 	fmt.Printf("[out-hsdp] build:%s version:%s\n", builddate, revision)
 
-	queue = make(chan logging.Resource)
-	status = make(chan int)
-
-	go func() {
-		var count int
-		resources := make([]logging.Resource, batchSize)
-
-		for {
-			select {
-			case r := <-queue:
-				// append and send
-				resources[count] = r
-				count++
-				if count == batchSize {
-					if err := flushResources(resources, count); err != nil {
-						postError(err)
-					}
-					count = 0
-				}
-			case <-time.After(1 * time.Second):
-				if count > 0 {
-					if err := flushResources(resources, count); err != nil {
-						postError(err)
-					}
-					count = 0
-				}
-			}
-		}
-	}()
+	resources = make([]logging.Resource, batchSize)
 
 	return output.FLB_OK
 }
 
-func postError(err error) {
-	switch err {
-	default: // Retry by default
-		status <- output.FLB_RETRY
+func contains(s []int, e int) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
 	}
-	return
+	return false
 }
 
-func postOK() {
-	status <- output.FLB_OK
-}
+func flushResources(resources []logging.Resource, count int) (*logging.StoreResponse, int, error) {
+	var err error
+	var resp *logging.StoreResponse
+	maxLoop := count
+	l := 0
 
-func flushResources(resources []logging.Resource, count int) error {
-	fmt.Printf("[out-hsdp] flushing %d resources\n", count)
-	_, err := client.StoreResources(resources, count)
-	return err
+	for {
+		l++
+		resp, err = client.StoreResources(resources, count)
+		if err == nil { // Happy flow
+			break
+		}
+		if err == logging.ErrBatchErrors && resp != nil {
+			// Remove offending messages and resend
+			nrErrors := len(resp.Failed)
+			keys := make([]int, 0, nrErrors)
+			for k := range resp.Failed {
+				keys = append(keys, k)
+			}
+			pos := 0
+			for i := 0; i < count; i++ {
+				if contains(keys, i) {
+					continue
+				}
+				resources[pos] = resources[i]
+				pos++
+			}
+			count = pos
+			fmt.Printf("[out-hsdp]: %d errors. resending %d\n", nrErrors, count)
+		} else {
+			fmt.Printf("[out-hsdp]: unexpected error in StoreResource(): %v\n", err)
+		}
+		// Break loop check
+		if l > maxLoop || count <= 0 {
+			fmt.Printf("[out-hsdp]: too many resends or nothing to send. giving up\n")
+			break
+		}
+	}
+	fmt.Printf("[out-hsdp] flushed %d/%d resources\n", count, maxLoop)
+	return resp, count, err
 }
 
 //export FLBPluginFlush
@@ -162,6 +160,9 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 	var ret int
 	var ts interface{}
 	var record map[interface{}]interface{}
+	var count = 0
+	var totalCount = 0
+	var totalDelivered = 0
 
 	// Create Fluent Bit decoder
 	dec := plugin.NewDecoder(data, int(length))
@@ -193,23 +194,33 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 			// error should be printed to console
 			continue
 		}
-		queue <- *js
+		resources[count] = *js
+		count++
+		totalCount++
+		if count == batchSize {
+			_, delivered, _ := flushResources(resources, count)
+			totalDelivered += delivered
+			count = 0
+		}
 	}
-	select {
-		case s := <- status:
-			return s
-		default:
+	if count > 0 {
+		_, delivered, _ := flushResources(resources, count)
+		totalDelivered += delivered
 	}
+	if totalDelivered == 0 {
+		return output.FLB_RETRY
+	}
+	fmt.Printf("[out-hsdp] totals for this flush: %d/%d\n", totalDelivered, totalCount)
 	return output.FLB_OK
 }
 
 func mapReturnDelete(m *map[string]interface{}, key, defaultValue string) string {
-	output := defaultValue
+	outputVal := defaultValue
 	if val, ok := (*m)[key].(string); ok && val != "" {
-		output = val
+		outputVal = val
 		delete(*m, key)
 	}
-	return output
+	return outputVal
 }
 
 func createResource(timestamp time.Time, tag string, record map[interface{}]interface{}) (*logging.Resource, error) {
@@ -269,7 +280,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		ServiceName:         serviceName,
 		EventID:             eventID,
 		TransactionID:       transactionID,
-		LogTime:             timestamp.UTC().Format(logging.LogTimeFormat),
+		LogTime:             timestamp.UTC().Format(logging.TimeFormat),
 		LogData:             logging.LogData{Message: logMessage},
 	}
 	if useCustomField {
