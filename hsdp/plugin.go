@@ -77,6 +77,8 @@ func FLBPluginRegister(ctx unsafe.Pointer) int {
 
 //export FLBPluginInit
 func FLBPluginInit(ctx unsafe.Pointer) int {
+	region := plugin.Environment(ctx, "Region")
+	environment := plugin.Environment(ctx, "Environment")
 	host := plugin.Environment(ctx, "IngestorHost")
 	sharedKey := plugin.Environment(ctx, "SharedKey")
 	secretKey := plugin.Environment(ctx, "SecretKey")
@@ -90,6 +92,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 
 	client, err = logging.NewClient(nil,
 		&logging.Config{
+			Region: region,
+			Environment: environment,
 			SharedKey:    sharedKey,
 			SharedSecret: secretKey,
 			ProductKey:   productKey,
