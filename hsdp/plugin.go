@@ -89,7 +89,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	useCustomField = customField != "" // TODO: remove global
 
 	client, err = logging.NewClient(nil,
-		logging.Config{
+		&logging.Config{
 			SharedKey:    sharedKey,
 			SharedSecret: secretKey,
 			ProductKey:   productKey,
@@ -246,7 +246,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		ServiceName:         serviceName,
 		EventID:             eventID,
 		TransactionID:       transactionID,
-		LogTime:             timestamp.UTC().Format(logging.LogTimeFormat),
+		LogTime:             timestamp.UTC().Format(logging.TimeFormat),
 		LogData:             logging.LogData{Message: logMessage},
 	}
 	if useCustomField {
