@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.4.6]
 - Upgrade dependencies
 - Improved retry mechanism
+- Native LogEvent pass-through (thanks @lohithkarlapudi for testing)
 
 ## [1.0.0]
 - First stable release
