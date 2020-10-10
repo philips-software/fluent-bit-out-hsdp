@@ -218,10 +218,6 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 
 	var resource logging.Resource
 
-	if useCustomField {
-		resource.Custom = msg
-	}
-
 	// Do we have a native LogEvent?
 	if err = json.Unmarshal(msg, &resource); err == nil && resource.Valid() {
 		return &resource, nil
@@ -246,7 +242,6 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	eventID := mapReturnDelete(&m, "event_id", "1")
 	logMessage := mapReturnDelete(&m, "logdata_message", "")
 
-
 	if logMessage == "" {
 		logMessage = string(msg)
 	}
@@ -266,6 +261,10 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		LogTime:             timestamp.UTC().Format(logging.TimeFormat),
 		LogData:             logging.LogData{Message: logMessage},
 	}
+	if useCustomField {
+		resource.Custom = msg
+	}
+
 	return &resource, nil
 }
 
