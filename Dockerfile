@@ -1,4 +1,4 @@
-FROM golang:1.15.2 AS builder
+FROM golang:1.15.3 AS builder
 
 WORKDIR /out
 COPY go.mod .
@@ -8,7 +8,7 @@ RUN go mod download
 COPY . .
 RUN make all
 
-FROM fluent/fluent-bit:1.6.0
+FROM fluent/fluent-bit:1.6.1
 LABEL maintainer="andy.lo-a-foe@philips.com"
 
 COPY --from=builder /out/out_hsdp.so /fluent-bit/bin/
