@@ -8,7 +8,7 @@ RUN go mod download
 COPY . .
 RUN make all
 
-FROM fluent/fluent-bit:1.8.2
+FROM fluent/fluent-bit:1.8.3
 LABEL maintainer="andy.lo-a-foe@philips.com"
 
 COPY --from=builder /out/out_hsdp.so /fluent-bit/bin/
