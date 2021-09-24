@@ -2,8 +2,10 @@ package hsdp
 
 import (
 	"C"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -16,12 +18,13 @@ import (
 
 var (
 	// both variables are set in Makefile
-	revision  string
-	builddate string
-	plugin    Plugin = &fluentPlugin{}
-	client    *logging.Client
-	queue     chan logging.Resource
+	revision       string
+	builddate      string
+	plugin         Plugin = &fluentPlugin{}
+	client         *logging.Client
+	queue          chan logging.Resource
 	useCustomField bool
+	ignoreTLS      bool
 )
 
 const (
@@ -85,15 +88,32 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
 	customField := plugin.Environment(ctx, "CustomField")
+	noTLS := plugin.Environment(ctx, "InsecureSkipVerify")
 
 	var err error
 
 	useCustomField = customField != "" // TODO: remove global
+	ignoreTLS = noTLS != ""
 
-	client, err = logging.NewClient(nil,
+	c := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+		},
+	}
+	if ignoreTLS {
+		fmt.Printf("InsecureSkipVerify: true\n")
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+		c.Transport = tr
+	}
+
+	client, err = logging.NewClient(c,
 		&logging.Config{
-			Region: region,
-			Environment: environment,
+			Region:       region,
+			Environment:  environment,
 			SharedKey:    sharedKey,
 			SharedSecret: secretKey,
 			ProductKey:   productKey,
@@ -228,7 +248,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 
 	transactionID := mapReturnDelete(&m, "transaction_id", generatedTransactionID.String())
 	if _, err := uuid.Parse(transactionID); err != nil { // validate
-			transactionID = generatedTransactionID.String()
+		transactionID = generatedTransactionID.String()
 	}
 	serverName := mapReturnDelete(&m, "server_name", "fluent-bit")
 	appInstance := mapReturnDelete(&m, "app_instance", "fluent-bit")
