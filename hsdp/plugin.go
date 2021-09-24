@@ -88,7 +88,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
 	customField := plugin.Environment(ctx, "CustomField")
-	noTLS := plugin.Environment(ctx, "IgnoreTLS")
+	noTLS := plugin.Environment(ctx, "InsecureSkipVerify")
 
 	var err error
 
@@ -101,6 +101,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		},
 	}
 	if ignoreTLS {
+		fmt.Printf("InsecureSkipVerify: true\n")
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,

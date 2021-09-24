@@ -30,6 +30,7 @@ Your `fluent-bit.conf` file should include an entry like below to enable the plu
 | ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     |
 | Debug         | Shows request details when set to true | HSDP\_DEBUG |
 | CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD |
+| InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure! | HSDP\_INSECURE\_SKIP\_VERIFY | 
 
 > The configuration options values can be specified via the environment as well.
 This is useful when running inside Docker or other container environment. Environment variable values have precedence 
