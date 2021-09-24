@@ -32,7 +32,7 @@ jobs:
         uses: philips-software/docker-ci-scripts@v2.2.1
         with:
           context: ./
-          dockerfile: ./Dockerfile.debug
+          file: ./Dockerfile.debug
           image-name: fluent-bit-out-hsdp
           tags: latest-debug
         env:
