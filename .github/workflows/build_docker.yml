@@ -12,7 +12,8 @@ jobs:
     - name: Build
       uses: philips-software/docker-ci-scripts@v2.2.1
       with:
-        dockerfile: ./
+        context: ./
+        file: ./Dockerfile
         image-name: fluent-bit-out-hsdp
         tags: latest
       env:
@@ -20,3 +21,22 @@ jobs:
         DOCKER_PASSWORD: '${{ secrets.DOCKER_PASSWORD }}'
         DOCKER_ORGANIZATION: philipssoftware 
         GITHUB_ORGANIZATION: philips-software
+
+  build_and_push_debug:
+    name: Build and push docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: philips-software/docker-ci-scripts@v2.2.1
+        with:
+          context: ./
+          dockerfile: ./Dockerfile.debug
+          image-name: fluent-bit-out-hsdp
+          tags: latest-debug
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: '${{ secrets.DOCKER_PASSWORD }}'
+          DOCKER_ORGANIZATION: philipssoftware
+          GITHUB_ORGANIZATION: philips-software
