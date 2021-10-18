@@ -92,8 +92,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 
 	var err error
 
-	useCustomField = customField != "" // TODO: remove global
-	ignoreTLS = noTLS != ""
+	useCustomField = (customField == "true" || customField == "yes" || customField == "1") // TODO: remove global
+	ignoreTLS = (noTLS == "true" || noTLS == "yes" || noTLS == "1")
 
 	c := &http.Client{
 		Transport: &http.Transport{
