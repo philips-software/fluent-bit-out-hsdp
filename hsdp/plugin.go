@@ -118,7 +118,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 			SharedSecret: secretKey,
 			ProductKey:   productKey,
 			BaseURL:      host,
-			Debug:        debug != "",
+			Debug:        (debug == "true" || debug == "yes" || debug == "1"),
 		})
 	if err != nil {
 		fmt.Printf("configuration errors: %v\n", err)
