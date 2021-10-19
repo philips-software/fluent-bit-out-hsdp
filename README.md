@@ -67,6 +67,16 @@ The below filter definition shows an example of assigning fields
     Record service_name Awesome_Tool
 ```
 
+```yaml
+[filter]
+    Name modify
+    Match *
+    Copy container_name app_name
+    Copy container_name service_name
+    Copy component_name component
+    Copy container_id app_instance
+```
+
 > Remaining fields will be rendered to a JSON hash and assigned to `logData.Message`
 
 # Building
