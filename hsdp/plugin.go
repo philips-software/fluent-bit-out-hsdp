@@ -156,7 +156,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		fmt.Printf("[out-hsdp] using service credentials\n")
 	}
 	if !validCreds {
-		fmt.Printf("[out-hsdp] valid credentials found\n")
+		fmt.Printf("[out-hsdp] no valid credentials found\n")
 		plugin.Exit(1)
 		return output.FLB_ERROR
 	}
@@ -183,12 +183,12 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				resources[count] = r
 				count++
 				if count == batchSize {
-					flushResources(resources, count)
+					_ = flushResources(resources, count)
 					count = 0
 				}
 			case <-time.After(1 * time.Second):
 				if count > 0 {
-					flushResources(resources, count)
+					_ = flushResources(resources, count)
 					count = 0
 				}
 			}
