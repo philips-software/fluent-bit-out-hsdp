@@ -86,7 +86,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	host := plugin.Environment(ctx, "IngestorHost")
 	sharedKey := plugin.Environment(ctx, "SharedKey")
 	secretKey := plugin.Environment(ctx, "SecretKey")
-	serviceID := plugin.Environment(ctx, "ServiceID")
+	serviceID := plugin.Environment(ctx, "ServiceId")
 	servicePrivateKey := plugin.Environment(ctx, "ServicePrivateKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
@@ -95,8 +95,9 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 
 	var err error
 
-	useCustomField = (customField == "true" || customField == "yes" || customField == "1") // TODO: remove global
-	ignoreTLS = (noTLS == "true" || noTLS == "yes" || noTLS == "1")
+	useCustomField = customField == "true" || customField == "yes" || customField == "1" // TODO: remove global
+	ignoreTLS = noTLS == "true" || noTLS == "yes" || noTLS == "1"
+	enableDebug := debug == "true" || debug == "yes" || debug == "1"
 
 	c := &http.Client{
 		Transport: &http.Transport{
@@ -104,10 +105,10 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		},
 	}
 	if ignoreTLS {
-		fmt.Printf("InsecureSkipVerify: true\n")
+		fmt.Printf("InsecureSkipVerify: %v\n", ignoreTLS)
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
+				InsecureSkipVerify: ignoreTLS,
 			},
 		}
 		c.Transport = tr
@@ -119,7 +120,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 
 		ProductKey: productKey,
 		BaseURL:    host,
-		Debug:      (debug == "true" || debug == "yes" || debug == "1"),
+		Debug:      enableDebug,
 	}
 
 	validCreds := false
@@ -133,8 +134,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 			Region:      region,
 			Environment: environment,
 		})
-		if err != nil && !validCreds {
-			fmt.Printf("No valid credentials found\n")
+		if err != nil {
+			fmt.Printf("[out-hsdp] invalid service credentials: %v\n", err)
 			plugin.Exit(1)
 			return output.FLB_ERROR
 		}
@@ -143,7 +144,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 			PrivateKey: servicePrivateKey,
 		})
 		if err != nil {
-			fmt.Printf("Invalid service credentials: %v\n", err)
+			fmt.Printf("[out-hsdp] invalid service credentials: %v\n", err)
 			plugin.Exit(1)
 			return output.FLB_ERROR
 		}
@@ -155,14 +156,14 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		fmt.Printf("[out-hsdp] using service credentials\n")
 	}
 	if !validCreds {
-		fmt.Printf("No valid credentials found\n")
+		fmt.Printf("[out-hsdp] valid credentials found\n")
 		plugin.Exit(1)
 		return output.FLB_ERROR
 	}
 
 	client, err = logging.NewClient(c, config)
 	if err != nil {
-		fmt.Printf("configuration errors: %v\n", err)
+		fmt.Printf("[out-hsdp] configuration errors: %v\n", err)
 		plugin.Unregister(ctx)
 		plugin.Exit(1)
 		return output.FLB_ERROR
@@ -228,7 +229,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 		case uint64:
 			timeStamp = time.Unix(int64(t), 0)
 		default:
-			fmt.Print("given time is not in a known format, defaulting to now.\n")
+			fmt.Print("[out-hsdp] given time is not in a known format, defaulting to now.\n")
 			timeStamp = time.Now()
 		}
 
@@ -274,7 +275,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	}
 	msg, err := json.Marshal(m)
 	if err != nil {
-		return nil, fmt.Errorf("error creating message for hsdp-logging: %v", err)
+		return nil, fmt.Errorf("[out-hsdp] error creating message for hsdp-logging: %v", err)
 	}
 
 	var resource logging.Resource
