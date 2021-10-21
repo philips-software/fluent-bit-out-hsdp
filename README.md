@@ -28,6 +28,8 @@ Your `fluent-bit.conf` file should include an entry like below to enable the plu
 | SharedKey     | The Shared key for signing request  | HSDP\_SHARED\_KEY      |
 | SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      |
 | ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     |
+| ServiceID     | The Service ID to use for authentication | HSDP\_SERVICE\_ID |
+| ServicePrivateKey | The Service private key         | HSDP\_SERVICE\_PRIVATE\_KEY |
 | Debug         | Shows request details when set to true | HSDP\_DEBUG |
 | CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD |
 | InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure! | HSDP\_INSECURE\_SKIP\_VERIFY | 

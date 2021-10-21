@@ -13,6 +13,7 @@ import (
 
 	"github.com/fluent/fluent-bit-go/output"
 	"github.com/google/uuid"
+	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/philips-software/go-hsdp-api/logging"
 )
 
@@ -85,6 +86,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	host := plugin.Environment(ctx, "IngestorHost")
 	sharedKey := plugin.Environment(ctx, "SharedKey")
 	secretKey := plugin.Environment(ctx, "SecretKey")
+	serviceID := plugin.Environment(ctx, "ServiceID")
+	servicePrivateKey := plugin.Environment(ctx, "ServicePrivateKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
 	customField := plugin.Environment(ctx, "CustomField")
@@ -110,16 +113,54 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		c.Transport = tr
 	}
 
-	client, err = logging.NewClient(c,
-		&logging.Config{
-			Region:       region,
-			Environment:  environment,
-			SharedKey:    sharedKey,
-			SharedSecret: secretKey,
-			ProductKey:   productKey,
-			BaseURL:      host,
-			Debug:        (debug == "true" || debug == "yes" || debug == "1"),
+	config := &logging.Config{
+		Region:      region,
+		Environment: environment,
+
+		ProductKey: productKey,
+		BaseURL:    host,
+		Debug:      (debug == "true" || debug == "yes" || debug == "1"),
+	}
+
+	validCreds := false
+	if sharedKey != "" && secretKey != "" {
+		config.SharedKey = sharedKey
+		config.SharedSecret = secretKey
+		validCreds = true
+	}
+	if serviceID != "" && servicePrivateKey != "" {
+		iamClient, err := iam.NewClient(nil, &iam.Config{
+			Region:      region,
+			Environment: environment,
 		})
+		if err != nil && !validCreds {
+			fmt.Printf("No valid credentials found\n")
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
+		err = iamClient.ServiceLogin(iam.Service{
+			ServiceID:  serviceID,
+			PrivateKey: servicePrivateKey,
+		})
+		if err != nil {
+			fmt.Printf("Invalid service credentials: %v\n", err)
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
+		// TODO: maybe add a scopes check here
+		config.IAMClient = iamClient
+		config.SharedKey = ""
+		config.SharedSecret = ""
+		validCreds = true
+		fmt.Printf("[out-hsdp] using service credentials\n")
+	}
+	if !validCreds {
+		fmt.Printf("No valid credentials found\n")
+		plugin.Exit(1)
+		return output.FLB_ERROR
+	}
+
+	client, err = logging.NewClient(c, config)
 	if err != nil {
 		fmt.Printf("configuration errors: %v\n", err)
 		plugin.Unregister(ctx)
