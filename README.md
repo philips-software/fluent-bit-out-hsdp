@@ -8,7 +8,18 @@ Fluent bit supports parser and filter plugin which can convert unstructured data
 
 [More on fluent-bit](https://fluentbit.io/documentation/0.14/getting_started/)
 
-# Configuration options
+## Cloud and On-Premise
+
+The plugin supports deployment to both Cloud and On-Premise environments. Depending on 
+the deployment type you can either specify the Cloud `Region` and `Environment` or the On-Premise
+`IamUrl` and `IdmUrl` values.
+
+## API Singing or Service Identity
+
+The plugin supports both the API Signing authorization mechanism or the use
+of a IAM Service Identity with the `LOG.CREATE` scope
+
+## Configuration options
 Your `fluent-bit.conf` file should include an entry like below to enable the plugin:
 
 ```
@@ -22,23 +33,27 @@ Your `fluent-bit.conf` file should include an entry like below to enable the plu
 ```
 
 ## Key description
-| Key           | Description                         | Environment variable |
-| --------------|-------------------------------------|----------------------|
-| IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST |
-| SharedKey     | The Shared key for signing request  | HSDP\_SHARED\_KEY      |
-| SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      |
-| ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     |
-| ServiceId     | The Service ID to use for authentication | HSDP\_SERVICE\_ID |
-| ServicePrivateKey | The Service private key         | HSDP\_SERVICE\_PRIVATE\_KEY |
-| Debug         | Shows request details when set to true | HSDP\_DEBUG |
-| CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD |
-| InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure! | HSDP\_INSECURE\_SKIP\_VERIFY | 
+| Key           | Description                         | Environment variable | Required |
+| --------------|-------------------------------------|----------------------|----------|
+| IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST | Optional |
+| SharedKey     | The Shared key for signing requests | HSDP\_SHARED\_KEY      | Optional |
+| SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      | Optional |
+| ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     | Required |
+| ServiceId     | The Service ID to use for authentication | HSDP\_SERVICE\_ID | Optional |
+| ServicePrivateKey | The Service private key         | HSDP\_SERVICE\_PRIVATE\_KEY | Optional |
+| Region        | The HSP Region (Cloud)                      | HSDP\_REGION | Optional |
+| Environment   | THE HSP Environment (Cloud)              | HSDP\_ENVIRONMENT | Optional |
+| IamUrl       | The IAM URL (On-Premise)           | HSDP\_IAM\_HOST | Optional |
+| IdmUrl       | The IDM URL (On-Premise)           | HSDP\_IDM\_HOST | Optional |
+| Debug         | Shows request details when set to true | HSDP\_DEBUG | Optional |
+| CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD | Optional |
+| InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure! | HSDP\_INSECURE\_SKIP\_VERIFY | Optional |
 
 > The configuration options values can be specified via the environment as well.
 This is useful when running inside Docker or other container environment. Environment variable values have precedence 
 over those in configuration files.
 
-# Record field mapping to HSDP logging resource
+## Record field mapping to HSDP logging resource
 
 The plugin maps certain record fields to defined HSDP logging resource fields. The below
 table shows the mapping, and the default value.
@@ -81,7 +96,7 @@ The below filter definition shows an example of assigning fields
 
 > Remaining fields will be rendered to a JSON hash and assigned to `logData.Message`
 
-# Building
+## Building
 
 ```shell
 docker build -t fluent-bit-out-hsdp .
@@ -91,18 +106,26 @@ docker build -t fluent-bit-out-hsdp .
 
 ```shell
 docker run --rm \
-    --env HSDP_PRODUCT_KEY=product-key-here \
-    --env HSDP_SECRET_KEY=secret-here \
-    --env HSDP_SHARED_KEY=shared-key-here \
+    -p 127.0.0.1:24224:24224 \
+    -e HSDP_PRODUCT_KEY=product-key-here \
+    -e HSDP_REGION=us-east \
+    -e HSDP_ENVIRONMENT=client-test \
+    -e HSDP_SERVICE_ID=my.service.id@app.prop.philips-healthsuite.com \
+    -e HSDP_SERVICE_PRIVATE_KEY="$(cat service_private_key.pem)" \
     -it fluent-bit-go-hsdp-out
 ```
 
-Above command will log CPU statistics every 5 seconds of the container image
+Once the above is running you can start other Docker containers and 
+use fluentd log driver to start loggin to HSDP logging:
 
-# Contact / Getting help
+```shell
+docker run --rm -it --log-driver fluentd alpine echo "hello world"
+```
+
+## Contact / Getting help
 
 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
-# License
+## License
 
 License is MIT

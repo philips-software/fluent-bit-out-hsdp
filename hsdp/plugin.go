@@ -92,6 +92,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	debug := plugin.Environment(ctx, "Debug")
 	customField := plugin.Environment(ctx, "CustomField")
 	noTLS := plugin.Environment(ctx, "InsecureSkipVerify")
+	idmURL := plugin.Environment(ctx, "IdmUrl")
+	iamURL := plugin.Environment(ctx, "IamUrl")
 
 	var err error
 
@@ -119,8 +121,11 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		Environment: environment,
 
 		ProductKey: productKey,
-		BaseURL:    host,
 		Debug:      enableDebug,
+	}
+
+	if host != "" {
+		config.BaseURL = host
 	}
 
 	validCreds := false
@@ -133,6 +138,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		iamClient, err := iam.NewClient(nil, &iam.Config{
 			Region:      region,
 			Environment: environment,
+			IDMURL:      idmURL,
+			IAMURL:      iamURL,
 		})
 		if err != nil {
 			fmt.Printf("[out-hsdp] invalid service credentials: %v\n", err)
@@ -247,12 +254,12 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 }
 
 func mapReturnDelete(m *map[string]interface{}, key, defaultValue string) string {
-	output := defaultValue
+	out := defaultValue
 	if val, ok := (*m)[key].(string); ok && val != "" {
-		output = val
+		out = val
 		delete(*m, key)
 	}
-	return output
+	return out
 }
 
 func createResource(timestamp time.Time, tag string, record map[interface{}]interface{}) (*logging.Resource, error) {
