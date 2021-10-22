@@ -13,6 +13,7 @@ import (
 
 	"github.com/fluent/fluent-bit-go/output"
 	"github.com/google/uuid"
+	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/philips-software/go-hsdp-api/logging"
 )
 
@@ -85,15 +86,20 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	host := plugin.Environment(ctx, "IngestorHost")
 	sharedKey := plugin.Environment(ctx, "SharedKey")
 	secretKey := plugin.Environment(ctx, "SecretKey")
+	serviceID := plugin.Environment(ctx, "ServiceId")
+	servicePrivateKey := plugin.Environment(ctx, "ServicePrivateKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
 	debug := plugin.Environment(ctx, "Debug")
 	customField := plugin.Environment(ctx, "CustomField")
 	noTLS := plugin.Environment(ctx, "InsecureSkipVerify")
+	idmURL := plugin.Environment(ctx, "IdmUrl")
+	iamURL := plugin.Environment(ctx, "IamUrl")
 
 	var err error
 
-	useCustomField = (customField == "true" || customField == "yes" || customField == "1") // TODO: remove global
-	ignoreTLS = (noTLS == "true" || noTLS == "yes" || noTLS == "1")
+	useCustomField = customField == "true" || customField == "yes" || customField == "1" // TODO: remove global
+	ignoreTLS = noTLS == "true" || noTLS == "yes" || noTLS == "1"
+	enableDebug := debug == "true" || debug == "yes" || debug == "1"
 
 	c := &http.Client{
 		Transport: &http.Transport{
@@ -101,27 +107,70 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		},
 	}
 	if ignoreTLS {
-		fmt.Printf("InsecureSkipVerify: true\n")
+		fmt.Printf("InsecureSkipVerify: %v\n", ignoreTLS)
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
+				InsecureSkipVerify: ignoreTLS,
 			},
 		}
 		c.Transport = tr
 	}
 
-	client, err = logging.NewClient(c,
-		&logging.Config{
-			Region:       region,
-			Environment:  environment,
-			SharedKey:    sharedKey,
-			SharedSecret: secretKey,
-			ProductKey:   productKey,
-			BaseURL:      host,
-			Debug:        (debug == "true" || debug == "yes" || debug == "1"),
+	config := &logging.Config{
+		Region:      region,
+		Environment: environment,
+
+		ProductKey: productKey,
+		Debug:      enableDebug,
+	}
+
+	if host != "" {
+		config.BaseURL = host
+	}
+
+	validCreds := false
+	if sharedKey != "" && secretKey != "" {
+		config.SharedKey = sharedKey
+		config.SharedSecret = secretKey
+		validCreds = true
+	}
+	if serviceID != "" && servicePrivateKey != "" {
+		iamClient, err := iam.NewClient(nil, &iam.Config{
+			Region:      region,
+			Environment: environment,
+			IDMURL:      idmURL,
+			IAMURL:      iamURL,
 		})
+		if err != nil {
+			fmt.Printf("[out-hsdp] invalid service credentials: %v\n", err)
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
+		err = iamClient.ServiceLogin(iam.Service{
+			ServiceID:  serviceID,
+			PrivateKey: servicePrivateKey,
+		})
+		if err != nil {
+			fmt.Printf("[out-hsdp] invalid service credentials: %v\n", err)
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
+		// TODO: maybe add a scopes check here
+		config.IAMClient = iamClient
+		config.SharedKey = ""
+		config.SharedSecret = ""
+		validCreds = true
+		fmt.Printf("[out-hsdp] using service credentials\n")
+	}
+	if !validCreds {
+		fmt.Printf("[out-hsdp] no valid credentials found\n")
+		plugin.Exit(1)
+		return output.FLB_ERROR
+	}
+
+	client, err = logging.NewClient(c, config)
 	if err != nil {
-		fmt.Printf("configuration errors: %v\n", err)
+		fmt.Printf("[out-hsdp] configuration errors: %v\n", err)
 		plugin.Unregister(ctx)
 		plugin.Exit(1)
 		return output.FLB_ERROR
@@ -141,12 +190,12 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				resources[count] = r
 				count++
 				if count == batchSize {
-					flushResources(resources, count)
+					_ = flushResources(resources, count)
 					count = 0
 				}
 			case <-time.After(1 * time.Second):
 				if count > 0 {
-					flushResources(resources, count)
+					_ = flushResources(resources, count)
 					count = 0
 				}
 			}
@@ -187,7 +236,7 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 		case uint64:
 			timeStamp = time.Unix(int64(t), 0)
 		default:
-			fmt.Print("given time is not in a known format, defaulting to now.\n")
+			fmt.Print("[out-hsdp] given time is not in a known format, defaulting to now.\n")
 			timeStamp = time.Now()
 		}
 
@@ -205,12 +254,12 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 }
 
 func mapReturnDelete(m *map[string]interface{}, key, defaultValue string) string {
-	output := defaultValue
+	out := defaultValue
 	if val, ok := (*m)[key].(string); ok && val != "" {
-		output = val
+		out = val
 		delete(*m, key)
 	}
-	return output
+	return out
 }
 
 func createResource(timestamp time.Time, tag string, record map[interface{}]interface{}) (*logging.Resource, error) {
@@ -233,7 +282,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	}
 	msg, err := json.Marshal(m)
 	if err != nil {
-		return nil, fmt.Errorf("error creating message for hsdp-logging: %v", err)
+		return nil, fmt.Errorf("[out-hsdp] error creating message for hsdp-logging: %v", err)
 	}
 
 	var resource logging.Resource
