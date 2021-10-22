@@ -33,21 +33,35 @@ be done by setting the right Environment variables:
 
 ## Settings
 
+### General
+
 | Key           | Description                         | Environment variable | Required |
 | --------------|-------------------------------------|----------------------|----------|
-| IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST | Optional |
-| SharedKey     | The Shared key for signing requests | HSDP\_SHARED\_KEY      | Optional |
-| SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      | Optional |
 | ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     | Required |
-| ServiceId     | The Service ID to use for authentication | HSDP\_SERVICE\_ID | Optional |
-| ServicePrivateKey | The Service private key         | HSDP\_SERVICE\_PRIVATE\_KEY | Optional |
-| Region        | The HSP Region (Cloud)                      | HSDP\_REGION | Optional |
-| Environment   | THE HSP Environment (Cloud)              | HSDP\_ENVIRONMENT | Optional |
-| IamUrl       | The IAM URL (On-Premise)           | HSDP\_IAM\_HOST | Optional |
-| IdmUrl       | The IDM URL (On-Premise)           | HSDP\_IDM\_HOST | Optional |
+| IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST | Optional |
 | Debug         | Shows request details when set to true | HSDP\_DEBUG | Optional |
 | CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD | Optional |
 | InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure! | HSDP\_INSECURE\_SKIP\_VERIFY | Optional |
+
+### Signing keys
+
+| Key           | Description                         | Environment variable | Required |
+| --------------|-------------------------------------|----------------------|----------|
+| SharedKey     | The Shared key for signing requests | HSDP\_SHARED\_KEY      | Optional |
+| SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      | Optional |
+
+### Service identities
+
+| Key           | Description                         | Environment variable | Required |
+| --------------|-------------------------------------|----------------------|----------|
+| Region        | The HSP Region (Cloud)                      | HSDP\_REGION | Optional |
+| Environment   | THE HSP Environment (Cloud)              | HSDP\_ENVIRONMENT | Optional |
+| IamUrl        | The IAM URL (On-Premise)           | HSDP\_IAM\_HOST | Optional |
+| IdmUrl        | The IDM URL (On-Premise)           | HSDP\_IDM\_HOST | Optional |
+| ServiceId     | The Service ID to use for authentication | HSDP\_SERVICE\_ID | Optional |
+| ServicePrivateKey | The Service private key         | HSDP\_SERVICE\_PRIVATE\_KEY | Optional |
+
+
 
 > Environment variable values take precedence over those in configuration files.
 
