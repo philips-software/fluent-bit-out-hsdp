@@ -14,7 +14,7 @@ The plugin supports deployment to both Cloud and On-Premise environments. Depend
 the deployment type you can either specify the Cloud `Region` and `Environment` or the On-Premise
 `IamUrl` and `IdmUrl` values.
 
-## API Singing or Service Identity
+## API Signing or Service Identities
 
 The plugin supports both the API Signing authorization mechanism or the use
 of a IAM Service Identity with the `LOG.CREATE` scope
@@ -26,13 +26,13 @@ Your `fluent-bit.conf` file should include an entry like below to enable the plu
 [output]
     Name hsdp
     Match *
-    IngestorHost https://logingestor2-client-test.us-east.philips-healthsuite.com
-    SharedKey YourSigningKeyHere
-    SecretKey YourSecretKeyHere
-    ProductKey your7137-prod-42ae-uct0e-key00here71
 ```
 
-## Key description
+Configuring the authorization mechanism and HSDP Logging endpoints should ideally
+be done by setting the right Environment variables:
+
+## Settings
+
 | Key           | Description                         | Environment variable | Required |
 | --------------|-------------------------------------|----------------------|----------|
 | IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST | Optional |
@@ -49,9 +49,7 @@ Your `fluent-bit.conf` file should include an entry like below to enable the plu
 | CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD | Optional |
 | InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure! | HSDP\_INSECURE\_SKIP\_VERIFY | Optional |
 
-> The configuration options values can be specified via the environment as well.
-This is useful when running inside Docker or other container environment. Environment variable values have precedence 
-over those in configuration files.
+> Environment variable values take precedence over those in configuration files.
 
 ## Record field mapping to HSDP logging resource
 
