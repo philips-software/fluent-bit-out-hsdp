@@ -56,8 +56,8 @@ be done by setting the right Environment variables:
 | --------------|-------------------------------------|----------------------|----------|
 | Region        | The HSP Region (Cloud)                      | HSDP\_REGION | Optional |
 | Environment   | THE HSP Environment (Cloud)              | HSDP\_ENVIRONMENT | Optional |
-| IamUrl        | The IAM URL (On-Premise)           | HSDP\_IAM\_HOST | Optional |
-| IdmUrl        | The IDM URL (On-Premise)           | HSDP\_IDM\_HOST | Optional |
+| IamUrl        | The IAM URL (On-Premise)           | HSDP\_IAM\_URL | Optional |
+| IdmUrl        | The IDM URL (On-Premise)           | HSDP\_IDM\_URL | Optional |
 | ServiceId     | The Service ID to use for authentication | HSDP\_SERVICE\_ID | Optional |
 | ServicePrivateKey | The Service private key         | HSDP\_SERVICE\_PRIVATE\_KEY | Optional |
 
