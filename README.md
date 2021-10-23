@@ -82,6 +82,8 @@ table shows the mapping, and the default value.
 | originating\_user  | originating\_user   | fluent-bit    ||
 | event\_id          | event\_id           | 1             ||
 | transaction\_id    | transaction\_id     | random UUID   |if original input is not a valid UUID a new one will be generated|
+| trace\_id          | trace\_id           |               ||
+| span\_id           | span\_id            |               ||
 | logdata\_message   | logData.Message     | field hash    |will replace the default field hash dump whent present|
 
 > Fields mapped to a HSDP logging resource field will be removed from the log message dump

@@ -310,6 +310,8 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	originatingUser := mapReturnDelete(&m, "originating_user", "fluent-bit")
 	eventID := mapReturnDelete(&m, "event_id", "1")
 	logMessage := mapReturnDelete(&m, "logdata_message", "")
+	traceID := mapReturnDelete(&m, "trace_id", "")
+	spanID := mapReturnDelete(&m, "span_id", "")
 
 	if logMessage == "" {
 		logMessage = string(msg)
@@ -327,6 +329,8 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		ServiceName:         serviceName,
 		EventID:             eventID,
 		TransactionID:       transactionID,
+		TraceID:             traceID,
+		SpanID:              spanID,
 		LogTime:             timestamp.UTC().Format(logging.TimeFormat),
 		LogData:             logging.LogData{Message: logMessage},
 	}
