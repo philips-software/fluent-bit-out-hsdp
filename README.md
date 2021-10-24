@@ -130,7 +130,7 @@ docker run --rm \
 ```
 
 Once the above is running you can start other Docker containers and 
-use fluentd log driver to start loggin to HSDP logging:
+use fluentd log driver to start logging to HSDP logging:
 
 ```shell
 docker run --rm -it --log-driver fluentd alpine echo "hello world"
