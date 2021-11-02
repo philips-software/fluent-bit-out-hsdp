@@ -20,7 +20,7 @@ import (
 var (
 	// both variables are set in Makefile
 	revision       string
-	builddate      string
+	buildDate      string
 	plugin         Plugin = &fluentPlugin{}
 	client         *logging.Client
 	queue          chan logging.Resource
@@ -175,7 +175,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		plugin.Exit(1)
 		return output.FLB_ERROR
 	}
-	fmt.Printf("[out-hsdp] build:%s version:%s\n", builddate, revision)
+	fmt.Printf("[out-hsdp] build:%s version:%s\n", buildDate, revision)
 
 	queue = make(chan logging.Resource)
 
@@ -190,12 +190,18 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				resources[count] = r
 				count++
 				if count == batchSize {
-					_ = flushResources(resources, count)
+					resp, err := flushResources(resources, count)
+					if err != nil {
+						fmt.Printf("[out-hsdp] flush error: %v %v\n", err, resp)
+					}
 					count = 0
 				}
 			case <-time.After(1 * time.Second):
 				if count > 0 {
-					_ = flushResources(resources, count)
+					resp, err := flushResources(resources, count)
+					if err != nil {
+						fmt.Printf("[out-hsdp] flush error: %v %v\n", err, resp)
+					}
 					count = 0
 				}
 			}
@@ -205,10 +211,9 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	return output.FLB_OK
 }
 
-func flushResources(resources []logging.Resource, count int) error {
+func flushResources(resources []logging.Resource, count int) (*logging.StoreResponse, error) {
 	fmt.Printf("[out-hsdp] flushing %d resources\n", count)
-	_, err := client.StoreResources(resources, count)
-	return err
+	return client.StoreResources(resources, count)
 }
 
 //export FLBPluginFlush

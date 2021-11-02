@@ -9,7 +9,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 all: test
-	go build -ldflags "-X 'main.revision=$(GITVERSION)' -X 'main.builddate=$(BUILDDATE)'" -buildmode=c-shared -o out_hsdp.so .
+	go build -ldflags "-X 'main.revision=$(GITVERSION)' -X 'main.buildDate=$(BUILDDATE)'" -buildmode=c-shared -o out_hsdp.so .
 
 test:
 	go test -cover -race -coverprofile=coverage.txt -covermode=atomic
