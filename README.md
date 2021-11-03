@@ -67,6 +67,35 @@ be done by setting the right Environment variables:
 
 ## Record field mapping to HSDP logging resource
 
+The plugin supports full passthrough of the native `LogEvent` type:
+
+```json
+{
+  "resourceType": "LogEvent",
+  "id": "7f4c85a8-e472-479f-b772-2916353d02a4",
+  "applicationName": "OPS",
+  "eventId": "110114",
+  "category": "TRACELOG",
+  "component": "TEST",
+  "transactionId": "2abd7355-cbdd-43e1-b32a-43ec19cd98f0",
+  "serviceName": "OPS",
+  "applicationInstance": "INST‐00002",
+  "applicationVersion": "1.0.0",
+  "originatingUser": "SomeUsr",
+  "serverName": "ops-dev.cloud.pcftest.com",
+  "logTime": "2017-01-31T08:00:00Z",
+  "severity": "INFO",
+  "logData": {
+    "message": "VGVzdCBNZXNzYWdl"
+  },
+  "custom": {
+    "foo": "bar"
+  }
+}
+```
+
+### field mapping
+
 The plugin maps certain record fields to defined HSDP logging resource fields. The below
 table shows the mapping, and the default value.
 
@@ -84,7 +113,7 @@ table shows the mapping, and the default value.
 | transaction\_id    | transaction\_id     | random UUID   |if original input is not a valid UUID a new one will be generated|
 | trace\_id          | trace\_id           |               ||
 | span\_id           | span\_id            |               ||
-| logdata\_message   | logData.Message     | field hash    |will replace the default field hash dump whent present|
+| logdata\_message   | logData.Message     | field hash    |will replace the default field hash dump went present|
 
 > Fields mapped to a HSDP logging resource field will be removed from the log message dump
 

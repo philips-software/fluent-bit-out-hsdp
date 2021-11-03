@@ -3,6 +3,7 @@ package hsdp
 import (
 	"C"
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -326,8 +327,12 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	if logMessage == "" {
 		logMessage = string(msg)
 	}
+	// Base64 encode. Requires go-hsdp-api 0.49.1+
+	logMessage = base64.StdEncoding.EncodeToString([]byte(logMessage))
+
 	resource = logging.Resource{
 		ID:                  id.String(),
+		ResourceType:        "LogEvent",
 		Severity:            severity,
 		ApplicationInstance: appInstance,
 		ApplicationName:     appName,
