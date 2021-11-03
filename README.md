@@ -67,7 +67,7 @@ be done by setting the right Environment variables:
 
 ## Record field mapping to HSDP logging resource
 
-The plugin supports full passthrough of the native `LogEvent` type:
+The plugin supports full pass-through of the native `LogEvent` JSON message type, example:
 
 ```json
 {
@@ -94,9 +94,11 @@ The plugin supports full passthrough of the native `LogEvent` type:
 }
 ```
 
+> **NOTE**: the `logData.message` field must be [base64 encoded](https://www.hsdp.io/documentation/logging/api-documents/log-event-api/log-event-api)
+
 ### field mapping
 
-The plugin maps certain record fields to defined HSDP logging resource fields. The below
+Alternatively, the plugin maps certain record fields to defined HSDP logging resource fields. The below
 table shows the mapping, and the default value.
 
 | Record field       | HSDP logging field  | Default value | Details |
@@ -105,7 +107,7 @@ table shows the mapping, and the default value.
 | app\_name          | applicationName     | fluent-bit    ||
 | app\_instance      | applicationInstance | fluent-bit    ||
 | app\_version       | applicationVersion  | 1.0           ||
-| category           | category            | Tracelog      ||
+| category           | category            | TraceLog      ||
 | severity           | severity            | informational ||
 | service\_name      | service\_name       | fluent-bit    ||
 | originating\_user  | originating\_user   | fluent-bit    ||
