@@ -63,7 +63,7 @@ func (p *fluentPlugin) GetRecord(dec *output.FLBDecoder) (int, interface{}, map[
 }
 
 func (p *fluentPlugin) NewDecoder(data unsafe.Pointer, length int) *output.FLBDecoder {
-	return output.NewDecoder(data, int(length))
+	return output.NewDecoder(data, length)
 }
 
 func (p *fluentPlugin) Exit(code int) {
@@ -254,8 +254,8 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 		js, err := createResource(timeStamp, C.GoString(tag), record)
 		if err != nil {
 			fmt.Printf("%v\n", err)
-			// DO NOT RETURN HERE becase one message has an error when json is
-			// generated, but a retry would fetch ALL messages again. instead an
+			// DO NOT RETURN HERE because one message has an error when json is
+			// generated, but a retry would fetch ALL messages again. Instead, an
 			// error should be printed to console
 			continue
 		}
@@ -316,7 +316,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	appVersion := mapReturnDelete(&m, "app_version", "1.0")
 	component := mapReturnDelete(&m, "component", "fluent-bit")
 	severity := mapReturnDelete(&m, "severity", "Informational")
-	category := mapReturnDelete(&m, "category", "Tracelog")
+	category := mapReturnDelete(&m, "category", "TraceLog")
 	serviceName := mapReturnDelete(&m, "service_name", "fluent-bit")
 	originatingUser := mapReturnDelete(&m, "originating_user", "fluent-bit")
 	eventID := mapReturnDelete(&m, "event_id", "1")
