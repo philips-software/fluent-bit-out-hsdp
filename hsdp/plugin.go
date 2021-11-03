@@ -69,7 +69,7 @@ func (p *fluentPlugin) Exit(code int) {
 	os.Exit(code)
 }
 
-func (p *fluentPlugin) Send(values []logging.Resource) error {
+func (p *fluentPlugin) Send(_ []logging.Resource) error {
 	// TODO
 	return nil
 }
@@ -135,11 +135,16 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		validCreds = true
 	}
 	if serviceID != "" && servicePrivateKey != "" {
+		debugLog := ""
+		if enableDebug {
+			debugLog = "/dev/stderr"
+		}
 		iamClient, err := iam.NewClient(nil, &iam.Config{
 			Region:      region,
 			Environment: environment,
 			IDMURL:      idmURL,
 			IAMURL:      iamURL,
+			DebugLog:    debugLog,
 		})
 		if err != nil {
 			fmt.Printf("[out-hsdp] invalid service credentials: %v\n", err)
