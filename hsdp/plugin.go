@@ -311,22 +311,33 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		transactionID = generatedTransactionID.String()
 	}
 	serverName := mapReturnDelete(&m, "server_name", "fluent-bit")
-	appInstance := mapReturnDelete(&m, "app_instance", "fluent-bit")
+	appInstance := mapReturnDelete(&m, "app_instance", tag)
 	appName := mapReturnDelete(&m, "app_name", "fluent-bit")
 	appVersion := mapReturnDelete(&m, "app_version", "1.0")
 	component := mapReturnDelete(&m, "component", "fluent-bit")
 	severity := mapReturnDelete(&m, "severity", "Informational")
 	category := mapReturnDelete(&m, "category", "TraceLog")
-	serviceName := mapReturnDelete(&m, "service_name", "fluent-bit")
+	serviceName := mapReturnDelete(&m, "service_name", tag)
 	originatingUser := mapReturnDelete(&m, "originating_user", "fluent-bit")
 	eventID := mapReturnDelete(&m, "event_id", "1")
 	logMessage := mapReturnDelete(&m, "logdata_message", "")
 	traceID := mapReturnDelete(&m, "trace_id", "")
 	spanID := mapReturnDelete(&m, "span_id", "")
 
+	msg, err = json.Marshal(m)
+	if err != nil {
+		return nil, fmt.Errorf("error creating message for hsdp-logging: %v", err)
+	}
+
+	custom := json.RawMessage{}
 	if logMessage == "" {
 		logMessage = string(msg)
+	} else {
+		custom = msg
 	}
+
+	logMessage = strings.ReplaceAll(logMessage, "\\u2028", "\n")
+
 	// Base64 encode. Requires go-hsdp-api 0.49.1+
 	logMessage = base64.StdEncoding.EncodeToString([]byte(logMessage))
 
@@ -348,6 +359,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		SpanID:              spanID,
 		LogTime:             timestamp.UTC().Format(logging.TimeFormat),
 		LogData:             logging.LogData{Message: logMessage},
+		Custom:              custom,
 	}
 	if useCustomField {
 		resource.Custom = msg
