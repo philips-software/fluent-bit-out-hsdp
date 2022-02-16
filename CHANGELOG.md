@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.8.12.2
+
+- Use sanitized UUID value to overcome HSDP Logging API limitations 
+
 ## 1.8.8.2
 
 - Add traceId and spanId field supports
