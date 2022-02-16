@@ -198,10 +198,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				if count == batchSize {
 					resp, err := flushResources(resources, count)
 					if err != nil {
-						fmt.Printf("[out-hsdp] flush error: %v [%v]\n", err, resp)
-						for i, msg := range resp.Failed {
-							fmt.Printf("[out-hsdp] %d: [%v] [%v]\n", i, msg.Error, msg)
-						}
+						printError(resp, err)
 					}
 					count = 0
 				}
@@ -209,10 +206,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				if count > 0 {
 					resp, err := flushResources(resources, count)
 					if err != nil {
-						fmt.Printf("[out-hsdp] flush error: %v [%v]\n", err, resp)
-						for i, msg := range resp.Failed {
-							fmt.Printf("[out-hsdp] %d: [%v] [%v]\n", i, msg.Error, msg)
-						}
+						printError(resp, err)
 					}
 					count = 0
 				}
@@ -221,6 +215,20 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	}()
 
 	return output.FLB_OK
+}
+
+func printError(resp *logging.StoreResponse, err error) {
+	fmt.Printf("[out-hsdp] flush error: %v\n", err)
+	if resp.Response != nil {
+		fmt.Printf("[out-hsdp] response: %v\n", resp.Response)
+	}
+	for i, msg := range resp.Failed {
+		data, err := json.Marshal(msg)
+		if err != nil {
+			data = []byte(fmt.Sprintf("decoding error: %v", err))
+		}
+		fmt.Printf("[out-hsdp] error entry %d: [%v] [%v]\n", i, msg.Error, string(data))
+	}
 }
 
 func flushResources(resources []logging.Resource, count int) (*logging.StoreResponse, error) {
