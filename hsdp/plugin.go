@@ -198,7 +198,10 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				if count == batchSize {
 					resp, err := flushResources(resources, count)
 					if err != nil {
-						fmt.Printf("[out-hsdp] flush error: %v %v\n", err, resp)
+						fmt.Printf("[out-hsdp] flush error: %v [%v]\n", err, resp)
+						for i, msg := range resp.Failed {
+							fmt.Printf("[out-hsdp] %d: [%v] [%v]\n", i, msg.Error, msg)
+						}
 					}
 					count = 0
 				}
@@ -206,7 +209,10 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 				if count > 0 {
 					resp, err := flushResources(resources, count)
 					if err != nil {
-						fmt.Printf("[out-hsdp] flush error: %v %v\n", err, resp)
+						fmt.Printf("[out-hsdp] flush error: %v [%v]\n", err, resp)
+						for i, msg := range resp.Failed {
+							fmt.Printf("[out-hsdp] %d: [%v] [%v]\n", i, msg.Error, msg)
+						}
 					}
 					count = 0
 				}
