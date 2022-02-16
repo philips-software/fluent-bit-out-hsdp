@@ -321,8 +321,10 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	generatedTransactionID, _ := uuid.NewRandom()
 
 	transactionID := mapReturnDelete(&m, "transaction_id", generatedTransactionID.String())
-	if _, err := uuid.Parse(transactionID); err != nil { // validate
+	if parsed, err := uuid.Parse(transactionID); err != nil { // validate
 		transactionID = generatedTransactionID.String()
+	} else {
+		transactionID = parsed.String() // sanitized version
 	}
 	serverName := mapReturnDelete(&m, "server_name", "fluent-bit")
 	appInstance := mapReturnDelete(&m, "app_instance", tag)
