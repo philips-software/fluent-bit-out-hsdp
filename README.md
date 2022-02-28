@@ -1,5 +1,3 @@
-![fluent bit](https://fluentbit.io/assets/img/logo1-default.png)
-
 # fluent bit HSDP logging output plugin
 
 This plugin outputs your logs to the HSDP Host Logging service. This is useful when your workloads are not running on Cloud foundry, but you still want to utilize the central logging facilities of HSDP. 
