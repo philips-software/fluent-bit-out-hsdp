@@ -33,32 +33,43 @@ be done by setting the right Environment variables:
 
 ### General
 
-| Key           | Description                         | Environment variable | Required |
-| --------------|-------------------------------------|----------------------|----------|
-| ProductKey    | The Product key of your proposition | HSDP\_PRODUCT\_KEY     | Required |
-| IngestorHost  | The HSDP ingestor host              | HSDP\_INGESTOR\_HOST | Optional |
-| Debug         | Shows request details when set to true | HSDP\_DEBUG | Optional |
-| CustomField   | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD | Optional |
-| InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure! | HSDP\_INSECURE\_SKIP\_VERIFY | Optional |
+These keys are relevant when using either SigningKey or Service identities
+
+| Key                | Description                                          | Environment variable         | Required |
+|--------------------|------------------------------------------------------|------------------------------|----------|
+| ProductKey         | The Product key of your proposition                  | HSDP\_PRODUCT\_KEY           | Optional |
+| IngestorHost       | The HSDP ingestor host                               | HSDP\_INGESTOR\_HOST         | Optional |
+| Debug              | Shows request details when set to true               | HSDP\_DEBUG                  | Optional |
+| CustomField        | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD          | Optional |
+| InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure!      | HSDP\_INSECURE\_SKIP\_VERIFY | Optional |
 
 ### Signing keys
 
-| Key           | Description                         | Environment variable | Required |
-| --------------|-------------------------------------|----------------------|----------|
-| SharedKey     | The Shared key for signing requests | HSDP\_SHARED\_KEY      | Optional |
-| SecretKey     | The Secret key for signing requests | HSDP\_SECRET\_KEY      | Optional |
+| Key       | Description                         | Environment variable | Required |
+|-----------|-------------------------------------|----------------------|----------|
+| SharedKey | The Shared key for signing requests | HSDP\_SHARED\_KEY    | Optional |
+| SecretKey | The Secret key for signing requests | HSDP\_SECRET\_KEY    | Optional |
 
 ### Service identities
 
-| Key           | Description                         | Environment variable | Required |
-| --------------|-------------------------------------|----------------------|----------|
-| Region        | The HSP Region (Cloud)                      | HSDP\_REGION | Optional |
-| Environment   | THE HSP Environment (Cloud)              | HSDP\_ENVIRONMENT | Optional |
-| IamUrl        | The IAM URL (On-Premise)           | HSDP\_IAM\_URL | Optional |
-| IdmUrl        | The IDM URL (On-Premise)           | HSDP\_IDM\_URL | Optional |
-| ServiceId     | The Service ID to use for authentication | HSDP\_SERVICE\_ID | Optional |
-| ServicePrivateKey | The Service private key         | HSDP\_SERVICE\_PRIVATE\_KEY | Optional |
+| Key               | Description                              | Environment variable        | Required |
+|-------------------|------------------------------------------|-----------------------------|----------|
+| Region            | The HSP Region (Cloud)                   | HSDP\_REGION                | Optional |
+| Environment       | THE HSP Environment (Cloud)              | HSDP\_ENVIRONMENT           | Optional |
+| IamUrl            | The IAM URL (On-Premise)                 | HSDP\_IAM\_URL              | Optional |
+| IdmUrl            | The IDM URL (On-Premise)                 | HSDP\_IDM\_URL              | Optional |
+| ServiceId         | The Service ID to use for authentication | HSDP\_SERVICE\_ID           | Optional |
+| ServicePrivateKey | The Service private key                  | HSDP\_SERVICE\_PRIVATE\_KEY | Optional |
 
+### Logdrain
+
+You can reuse an existing Cloud foundry logdrainer endpoint to ship your logs to HSDP logging. The advantage is
+that you only need the Logdrain URL itself, no other configuration. This URL is considered
+a credential so care should be taken to protect it though.
+
+| Key         | Description          | Environment variable | Required |
+|-------------|----------------------|----------------------|----------|
+| LogdrainUrl | The HSP Logdrain URL | HSDP_LOGDRAIN_URL    | Optional |
 
 
 > Environment variable values take precedence over those in configuration files.
