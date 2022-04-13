@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"runtime/debug"
 	"strings"
 	"time"
 	"unsafe"
@@ -94,7 +95,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	serviceID := plugin.Environment(ctx, "ServiceId")
 	servicePrivateKey := plugin.Environment(ctx, "ServicePrivateKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
-	debug := plugin.Environment(ctx, "Debug")
+	debugging := plugin.Environment(ctx, "Debug")
 	customField := plugin.Environment(ctx, "CustomField")
 	noTLS := plugin.Environment(ctx, "InsecureSkipVerify")
 	idmURL := plugin.Environment(ctx, "IdmUrl")
@@ -105,7 +106,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 
 	useCustomField = customField == "true" || customField == "yes" || customField == "1" // TODO: remove global
 	ignoreTLS = noTLS == "true" || noTLS == "yes" || noTLS == "1"
-	enableDebug := debug == "true" || debug == "yes" || debug == "1"
+	enableDebug := debugging == "true" || debugging == "yes" || debugging == "1"
 
 	c := &http.Client{
 		Transport: &http.Transport{
@@ -200,7 +201,10 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 			return output.FLB_ERROR
 		}
 	}
-	fmt.Printf("[out-hsdp] build:%s version:%s\n", buildDate, revision)
+	info, ok := debug.ReadBuildInfo()
+	if ok {
+		fmt.Printf("[out-hsdp] build: %s\n", info.String())
+	}
 
 	queue = make(chan logging.Resource)
 
