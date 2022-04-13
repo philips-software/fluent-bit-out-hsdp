@@ -12,10 +12,11 @@ The plugin supports deployment to both Cloud and On-Premise environments. Depend
 the deployment type you can either specify the Cloud `Region` and `Environment` or the On-Premise
 `IamUrl` and `IdmUrl` values.
 
-## API Signing or Service Identities
+## API Signing, Service Identities or Logdrainer
 
 The plugin supports both the API Signing authorization mechanism or the use
-of a IAM Service Identity with the `LOG.CREATE` scope
+of a IAM Service Identity with the `LOG.CREATE` scope. It also supports using a CF Logdrain endpoint 
+although that limits the log format output (e.g. no support for the `custom` field)
 
 ## Configuration options
 Your `fluent-bit.conf` file should include an entry like below to enable the plugin:
