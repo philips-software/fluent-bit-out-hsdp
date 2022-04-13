@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"runtime/debug"
 	"strings"
 	"time"
 	"unsafe"
@@ -23,7 +24,7 @@ var (
 	revision       string
 	buildDate      string
 	plugin         Plugin = &fluentPlugin{}
-	client         *logging.Client
+	client         storer
 	queue          chan logging.Resource
 	useCustomField bool
 	ignoreTLS      bool
@@ -43,6 +44,10 @@ type Plugin interface {
 	NewDecoder(data unsafe.Pointer, length int) *output.FLBDecoder
 	Send(values []logging.Resource) error
 	Exit(code int)
+}
+
+type storer interface {
+	StoreResources(messages []logging.Resource, count int) (*logging.StoreResponse, error)
 }
 
 func (p *fluentPlugin) Environment(ctx unsafe.Pointer, key string) string {
@@ -90,17 +95,18 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	serviceID := plugin.Environment(ctx, "ServiceId")
 	servicePrivateKey := plugin.Environment(ctx, "ServicePrivateKey")
 	productKey := plugin.Environment(ctx, "ProductKey")
-	debug := plugin.Environment(ctx, "Debug")
+	debugging := plugin.Environment(ctx, "Debug")
 	customField := plugin.Environment(ctx, "CustomField")
 	noTLS := plugin.Environment(ctx, "InsecureSkipVerify")
 	idmURL := plugin.Environment(ctx, "IdmUrl")
 	iamURL := plugin.Environment(ctx, "IamUrl")
+	logdrainURL := plugin.Environment(ctx, "LogdrainUrl")
 
 	var err error
 
 	useCustomField = customField == "true" || customField == "yes" || customField == "1" // TODO: remove global
 	ignoreTLS = noTLS == "true" || noTLS == "yes" || noTLS == "1"
-	enableDebug := debug == "true" || debug == "yes" || debug == "1"
+	enableDebug := debugging == "true" || debugging == "yes" || debugging == "1"
 
 	c := &http.Client{
 		Transport: &http.Transport{
@@ -168,20 +174,37 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		validCreds = true
 		fmt.Printf("[out-hsdp] using service credentials\n")
 	}
+	if logdrainURL != "" {
+		validCreds = true
+		fmt.Printf("[out-hsdp] using logdrain endpoint\n")
+	}
 	if !validCreds {
 		fmt.Printf("[out-hsdp] no valid credentials found\n")
 		plugin.Exit(1)
 		return output.FLB_ERROR
 	}
 
-	client, err = logging.NewClient(c, config)
-	if err != nil {
-		fmt.Printf("[out-hsdp] configuration errors: %v\n", err)
-		plugin.Unregister(ctx)
-		plugin.Exit(1)
-		return output.FLB_ERROR
+	if logdrainURL != "" {
+		client, err = NewLogDrainerStorer(logdrainURL)
+		if err != nil {
+			fmt.Printf("[out-hsdp] configuration error: %v\n", err)
+			plugin.Unregister(ctx)
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
+	} else {
+		client, err = logging.NewClient(c, config)
+		if err != nil {
+			fmt.Printf("[out-hsdp] configuration error: %v\n", err)
+			plugin.Unregister(ctx)
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
 	}
-	fmt.Printf("[out-hsdp] build:%s version:%s\n", buildDate, revision)
+	info, ok := debug.ReadBuildInfo()
+	if ok {
+		fmt.Printf("[out-hsdp] build: %s\n", info.String())
+	}
 
 	queue = make(chan logging.Resource)
 
