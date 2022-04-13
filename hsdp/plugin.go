@@ -23,7 +23,7 @@ var (
 	revision       string
 	buildDate      string
 	plugin         Plugin = &fluentPlugin{}
-	client         *logging.Client
+	client         storer
 	queue          chan logging.Resource
 	useCustomField bool
 	ignoreTLS      bool
@@ -43,6 +43,10 @@ type Plugin interface {
 	NewDecoder(data unsafe.Pointer, length int) *output.FLBDecoder
 	Send(values []logging.Resource) error
 	Exit(code int)
+}
+
+type storer interface {
+	StoreResources(messages []logging.Resource, count int) (*logging.StoreResponse, error)
 }
 
 func (p *fluentPlugin) Environment(ctx unsafe.Pointer, key string) string {
@@ -95,6 +99,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	noTLS := plugin.Environment(ctx, "InsecureSkipVerify")
 	idmURL := plugin.Environment(ctx, "IdmUrl")
 	iamURL := plugin.Environment(ctx, "IamUrl")
+	logdrainURL := plugin.Environment(ctx, "LogdrainUrl")
 
 	var err error
 
@@ -168,18 +173,32 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		validCreds = true
 		fmt.Printf("[out-hsdp] using service credentials\n")
 	}
+	if logdrainURL != "" {
+		validCreds = true
+		fmt.Printf("[out-hsdp] using logdrain endpoint\n")
+	}
 	if !validCreds {
 		fmt.Printf("[out-hsdp] no valid credentials found\n")
 		plugin.Exit(1)
 		return output.FLB_ERROR
 	}
 
-	client, err = logging.NewClient(c, config)
-	if err != nil {
-		fmt.Printf("[out-hsdp] configuration errors: %v\n", err)
-		plugin.Unregister(ctx)
-		plugin.Exit(1)
-		return output.FLB_ERROR
+	if logdrainURL != "" {
+		client, err = NewLogDrainerStorer(logdrainURL)
+		if err != nil {
+			fmt.Printf("[out-hsdp] configuration error: %v\n", err)
+			plugin.Unregister(ctx)
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
+	} else {
+		client, err = logging.NewClient(c, config)
+		if err != nil {
+			fmt.Printf("[out-hsdp] configuration error: %v\n", err)
+			plugin.Unregister(ctx)
+			plugin.Exit(1)
+			return output.FLB_ERROR
+		}
 	}
 	fmt.Printf("[out-hsdp] build:%s version:%s\n", buildDate, revision)
 
