@@ -328,9 +328,43 @@ config:
         K8S-Logging.Exclude On
 
     [FILTER]
+        Name                nest
+        Match               kube.*
+        Wildcard            pod_name
+        Operation lift
+        Nested_under kubernetes
+        Add_prefix   kubernetes_
+
+    [FILTER]
         Name modify
         Match kube.*
         Hard_copy log logdata_message
+
+    [FILTER]
+        Name modify
+        Match kube.*
+        Hard_copy kubernetes_host server_name
+
+    [FILTER]
+        Name modify
+        Match kube.*
+        Hard_copy kubernetes_pod_name app_instance
+
+    [FILTER]
+        Name modify
+        Match kube.*
+        Hard_copy kubernetes_container_name app_name
+
+    [FILTER]
+        Name modify
+        Match kube.*
+        Hard_copy kubernetes_namespace_name component
+
+    [FILTER]
+        Name modify
+        Match kube.*
+        Hard_copy kubernetes_container_image app_version
+
 
   ## https://docs.fluentbit.io/manual/pipeline/outputs
   outputs: |
