@@ -214,9 +214,32 @@ podLabels: {}
 
 priorityClassName: ""
 
-env: []
-#  - name: FOO
-#    value: "bar"
+env:
+  - name: HSDP_PRODUCT_KEY
+    valueFrom:
+      secretKeyRef:
+        name: hsdp-logging
+        key: product_key
+  - name: HSDP_INGESTOR_HOST
+    valueFrom:
+      secretKeyRef:
+        name: hsdp-logging
+        key: ingestor_host
+
+  - name: HSDP_SHARED_KEY
+    valueFrom:
+      secretKeyRef:
+        name: hsdp-logging
+        key: shared_key
+
+  - name: HSDP_SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: hsdp-logging
+        key: secret_key
+
+  - name: HSDP_CUSTOM_FIELD
+    value: "true"
 
 # The envWithTpl array below has the same usage as "env", but is using the tpl function to support templatable string.
 # This can be useful when you want to pass dynamic values to the Chart using the helm argument "--set <variable>=<value>"
@@ -304,22 +327,19 @@ config:
         K8S-Logging.Parser On
         K8S-Logging.Exclude On
 
+    [FILTER]
+        Name modify
+        Match kube.*
+        Hard_copy log logdata_message
+
   ## https://docs.fluentbit.io/manual/pipeline/outputs
   outputs: |
-    [OUTPUT]
-        Name es
+        Name hsdp
         Match kube.*
-        Host elasticsearch-master
-        Logstash_Format On
-        Retry_Limit False
 
     [OUTPUT]
-        Name es
+        Name hsdp
         Match host.*
-        Host elasticsearch-master
-        Logstash_Format On
-        Logstash_Prefix node
-        Retry_Limit False
 
   ## https://docs.fluentbit.io/manual/pipeline/parsers
   customParsers: |
