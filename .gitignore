@@ -11,4 +11,3 @@ launch.json
 coverage.txt
 fluent-bit-go-hsdp-out
 *.so
-*.yaml
