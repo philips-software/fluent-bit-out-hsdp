@@ -334,6 +334,7 @@ config:
 
   ## https://docs.fluentbit.io/manual/pipeline/outputs
   outputs: |
+    [OUTPUT]
         Name hsdp
         Match kube.*
 
