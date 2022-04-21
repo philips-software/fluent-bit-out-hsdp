@@ -177,6 +177,47 @@ use fluentd log driver to start logging to HSDP logging:
 docker run --rm -it --log-driver fluentd alpine echo "hello world"
 ```
 
+## Helm Chart
+
+A copy of the fluent-bit Helm chart is included in this repo with minor
+modifications to deploy our Docker image. 
+
+### Secret
+
+The chart will attempt to read credentials from an `hsdp-logging` Kubernetes secret which should reside
+in the namespace. An example `hsdp-logging-secret.yaml` is included below. Make sure you replace the values accordingly
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hsdp-logging
+type: Opaque
+data:
+  service_id: aW52YWxpZAo=
+  service_private_key: aW52YWxpZAo=
+  region: ZXUtd2VzdA==
+  environment: Y2xpZW50LXRlc3Q=
+  shared_key: cmVwbGFjZV9tZV93aXRoX2NvcnJlY3RfdmFsdWVz
+  secret_key: cmVwbGFjZV9tZV93aXRoX2NvcnJlY3RfdmFsdWVz
+  product_key: cmVwbGFjZV9tZV93aXRoX2NvcnJlY3RfdmFsdWVz
+  ingestor_host: aHR0cHM6Ly9sb2dpbmdlc3RvcjItY2xpZW50LXRlc3QuZXUtd2VzdC5waGlsaXBzLWhlYWx0aHN1aXRlLmNvbQ==
+```
+
+Apply the secret to the right namepace:
+
+```shell
+kubectl apply -f hsdp-logging-secret.yaml -n logging
+```
+
+Finally, install the Helm chart:
+
+```shell
+helm install fluent-bit-out-hsdp -n logging fluent-bit-out-hsdp/
+```
+
+If the credentials are correct you should now see your Kubernetes cluster logs in the HSDP Logging system.
+
 ## Contact / Getting help
 
 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
