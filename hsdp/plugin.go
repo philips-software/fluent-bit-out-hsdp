@@ -20,9 +20,6 @@ import (
 )
 
 var (
-	// both variables are set in Makefile
-	revision       string
-	buildDate      string
 	plugin         Plugin = &fluentPlugin{}
 	client         storer
 	queue          chan logging.Resource
@@ -255,7 +252,6 @@ func printError(resp *logging.StoreResponse, err error) {
 }
 
 func flushResources(resources []logging.Resource, count int) (*logging.StoreResponse, error) {
-	fmt.Printf("[out-hsdp] flushing %d resources\n", count)
 	return client.StoreResources(resources, count)
 }
 
