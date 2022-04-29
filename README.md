@@ -194,10 +194,6 @@ metadata:
   name: hsdp-logging
 type: Opaque
 data:
-  service_id: aW52YWxpZAo=
-  service_private_key: aW52YWxpZAo=
-  region: ZXUtd2VzdA==
-  environment: Y2xpZW50LXRlc3Q=
   shared_key: cmVwbGFjZV9tZV93aXRoX2NvcnJlY3RfdmFsdWVz
   secret_key: cmVwbGFjZV9tZV93aXRoX2NvcnJlY3RfdmFsdWVz
   product_key: cmVwbGFjZV9tZV93aXRoX2NvcnJlY3RfdmFsdWVz
