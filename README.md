@@ -179,8 +179,7 @@ docker run --rm -it --log-driver fluentd alpine echo "hello world"
 
 ## Helm Chart
 
-A copy of the fluent-bit Helm chart is included in this repo with minor
-modifications to deploy our Docker image. 
+You can deploy fluent-bit and the HSDP plugin using a Helm chart
 
 ### Secret
 
