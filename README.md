@@ -213,7 +213,8 @@ kubectl apply -f hsdp-logging-secret.yaml -n logging
 Finally, install the Helm chart:
 
 ```shell
-helm install fluent-bit-out-hsdp -n logging fluent-bit-out-hsdp/
+helm repo add loafoe https://loafoe.github.io/helm-charts/
+helm install fluent-bit-out-hsdp loafoe/fluent-bit-out-hsdp -n logging
 ```
 
 If the credentials are correct you should now see your Kubernetes cluster logs in the HSDP Logging system.
