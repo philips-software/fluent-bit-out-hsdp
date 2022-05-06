@@ -367,8 +367,6 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	custom := json.RawMessage{}
 	if logMessage == "" {
 		logMessage = string(msg)
-	} else {
-		custom = msg
 	}
 
 	logMessage = strings.ReplaceAll(logMessage, "\\u2028", "\n")
