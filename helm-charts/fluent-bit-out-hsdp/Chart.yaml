@@ -6,7 +6,7 @@ keywords:
   - fluent-bit
   - fluentd
   - hsdp
-version: 0.0.9
+version: 0.0.10
 appVersion: 1.9.2.2
 icon: https://fluentbit.io/assets/img/logo1-default.png
 home: https://fluentbit.io/
