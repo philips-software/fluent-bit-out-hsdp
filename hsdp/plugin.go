@@ -182,7 +182,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	}
 
 	if logdrainURL != "" {
-		client, err = NewLogDrainerStorer(logdrainURL)
+		client, err = newLogDrainerStorer(logdrainURL)
 		if err != nil {
 			fmt.Printf("[out-hsdp] configuration error: %v\n", err)
 			plugin.Unregister(ctx)

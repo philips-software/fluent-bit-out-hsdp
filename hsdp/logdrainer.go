@@ -3,7 +3,7 @@ package hsdp
 import (
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -20,7 +20,6 @@ type logDrainerStorer struct {
 }
 
 func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int) (*logging.StoreResponse, error) {
-	var errs []error
 	var resp *http.Response
 	logResponse := &logging.StoreResponse{}
 
@@ -29,7 +28,7 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 		msg := messages[i]
 		decoded, err := base64.StdEncoding.DecodeString(msg.LogData.Message)
 		if err != nil {
-			errs = append(errs, err)
+			_, _ = fmt.Fprintf(os.Stderr, "failed to decode message: %v", err)
 			continue
 		}
 		syslogMessage := rfc5424.SyslogMessage{}
@@ -49,12 +48,9 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 				"Content-Type": []string{"text/plain"},
 			},
 		}
-		req.Body = ioutil.NopCloser(strings.NewReader(message))
+		req.Body = io.NopCloser(strings.NewReader(message))
 		resp, err = l.Client.Do(req)
-		if err != nil {
-			errs = append(errs, err)
-		}
-		if resp == nil || resp.StatusCode != http.StatusOK {
+		if err != nil || resp == nil || resp.StatusCode != http.StatusOK {
 			_, _ = fmt.Fprintf(os.Stderr, "failed to send log: %v %v", resp, err)
 		}
 	}
@@ -62,7 +58,7 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 	return logResponse, nil
 }
 
-func NewLogDrainerStorer(logDrainerURL string) (storer, error) {
+func newLogDrainerStorer(logDrainerURL string) (storer, error) {
 	if logDrainerURL == "" {
 		return nil, fmt.Errorf("missing or empty logDrainerURL")
 	}
