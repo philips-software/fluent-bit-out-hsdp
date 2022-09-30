@@ -1,4 +1,4 @@
-module github.com/philips-labs/fluent-bit-out-hsdp
+module github.com/philips-software/fluent-bit-out-hsdp
 
 go 1.18
 
