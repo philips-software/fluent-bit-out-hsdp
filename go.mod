@@ -3,7 +3,7 @@ module github.com/philips-software/fluent-bit-out-hsdp
 go 1.18
 
 require (
-	github.com/fluent/fluent-bit-go v0.0.0-20200304012558-215d6804159a
+	github.com/fluent/fluent-bit-go v0.0.0-20220311094233-780004bf5562
 	github.com/google/uuid v1.3.0
 	github.com/influxdata/go-syslog/v2 v2.0.1
 	github.com/philips-software/go-hsdp-api v0.74.2
@@ -18,8 +18,8 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/philips-software/go-hsdp-signer v1.4.0 // indirect
-	github.com/ugorji/go/codec v1.1.7 // indirect
-	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
-	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069 // indirect
+	github.com/ugorji/go/codec v1.2.7 // indirect
+	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be // indirect
+	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
