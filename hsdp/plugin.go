@@ -239,7 +239,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 
 func printError(resp *logging.StoreResponse, err error) {
 	fmt.Printf("[out-hsdp] flush error: %v\n", err)
-	if resp.Response != nil {
+	if resp != nil && resp.Response != nil {
 		fmt.Printf("[out-hsdp] response: %v\n", resp.Response)
 	}
 	for i, msg := range resp.Failed {
