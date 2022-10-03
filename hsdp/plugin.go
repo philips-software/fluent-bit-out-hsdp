@@ -242,12 +242,14 @@ func printError(resp *logging.StoreResponse, err error) {
 	if resp != nil && resp.Response != nil {
 		fmt.Printf("[out-hsdp] response: %v\n", resp.Response)
 	}
-	for i, msg := range resp.Failed {
-		data, err := json.Marshal(msg)
-		if err != nil {
-			data = []byte(fmt.Sprintf("decoding error: %v", err))
+	if resp != nil && resp.Failed != nil {
+		for i, msg := range resp.Failed {
+			data, err := json.Marshal(msg)
+			if err != nil {
+				data = []byte(fmt.Sprintf("decoding error: %v", err))
+			}
+			fmt.Printf("[out-hsdp] error entry %d: [%v] [%v]\n", i, msg.Error, string(data))
 		}
-		fmt.Printf("[out-hsdp] error entry %d: [%v] [%v]\n", i, msg.Error, string(data))
 	}
 }
 
