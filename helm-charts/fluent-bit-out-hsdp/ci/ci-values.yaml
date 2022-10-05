@@ -1,1 +1,11 @@
-logLevel: debug
+fluent-bit:
+  logLevel: debug
+  env:
+    - name: HSDP_PRODUCT_KEY
+      value: "fake-product-key"
+    - name: HSDP_INGESTOR_HOST
+      value: "https://ingestor-host.local"
+    - name: HSDP_SHARED_KEY
+      value: "fake-shared-key"
+    - name: HSDP_SECRET_KEY
+      value: "fake-secret-key"

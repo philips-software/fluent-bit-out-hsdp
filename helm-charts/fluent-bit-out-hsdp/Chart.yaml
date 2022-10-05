@@ -6,8 +6,8 @@ keywords:
   - fluent-bit
   - fluentd
   - hsdp
-version: 0.0.12
-appVersion: 1.9.9-4
+version: 0.0.14
+appVersion: 1.9.9-5
 icon: https://fluentbit.io/assets/img/logo1-default.png
 home: https://fluentbit.io/
 sources:
@@ -15,3 +15,8 @@ sources:
 maintainers:
   - name: loafoe
     email: andy.loafoe@gmail.com
+
+dependencies:
+  - name: fluent-bit
+    version: 0.20.9
+    repository: https://fluent.github.io/helm-charts
