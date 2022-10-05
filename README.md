@@ -2,6 +2,8 @@
 
 This plugin outputs your logs to the HSDP Host Logging service. This is useful when your workloads are not running on Cloud foundry, but you still want to utilize the central logging facilities of HSDP. 
 
+  ![flow](resources/flow.svg)
+
 Fluent bit supports parser and filter plugin which can convert unstructured data gathered from the log Input interface into a structured one and to alter existing structured data before ingestion.
 
 [More on fluent-bit](https://fluentbit.io/documentation/0.14/getting_started/)
