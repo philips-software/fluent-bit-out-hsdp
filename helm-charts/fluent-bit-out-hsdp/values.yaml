@@ -1,9 +1,0 @@
-fluent-bit:
-  initContainers:
-    - name: plugins
-      image: philipssoftware/fluent-bit-out-hsdp:1.9.9-5
-      command: ["/bin/sh"]
-      args: ["-c", "cp /fluent-bit/bin/out_hsdp.so /plugins"]
-      volumeMounts:
-        - name: config
-          mountPath: /plugins
