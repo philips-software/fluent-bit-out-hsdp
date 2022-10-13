@@ -175,7 +175,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	}
 	if logdrainURL != "" {
 		validCreds = true
-		fmt.Printf("[out-hsdp] using logdrain endpoint\n")
+		fmt.Printf("[out-hsdp] using logdrain endpoint [applicationName:%s] [serverName:%s]\n", logdrainApplicationName, logdrainServerName)
 	}
 	if !validCreds {
 		fmt.Printf("[out-hsdp] no valid credentials found\n")
