@@ -1,4 +1,4 @@
-package hsdp
+package logdrainer
 
 import (
 	"encoding/base64"
@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/influxdata/go-syslog/v2/rfc5424"
+	"github.com/philips-software/fluent-bit-out-hsdp/storer"
 	"github.com/philips-software/go-hsdp-api/logging"
 )
 
@@ -19,6 +20,7 @@ type logDrainerStorer struct {
 	logDrainerURL   *url.URL
 	applicationName string
 	serverName      string
+	debug           bool
 }
 
 func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int) (*logging.StoreResponse, error) {
@@ -46,8 +48,13 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 			syslogMessage.SetHostname(fmt.Sprintf("%s.fluent-bit.%s", l.applicationName, l.serverName))
 		}
 		syslogMessage.SetParameter("fluent-bit-out-hsdp", "taskId", msg.ApplicationInstance)
+		syslogMessage.SetParameter("fluent-bit-out-hsdp", "applicationName", l.applicationName)
+		syslogMessage.SetParameter("fluent-bit-out-hsdp", "serverName", l.serverName)
 		syslogMessage.SetMessage(string(decoded))
 		message, _ := syslogMessage.String()
+		if l.debug {
+			fmt.Printf("[out-hsdp] RFC5424: %s\n", message)
+		}
 		req := &http.Request{
 			Method: http.MethodPost,
 			URL:    l.logDrainerURL,
@@ -65,7 +72,7 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 	return logResponse, nil
 }
 
-func newLogDrainerStorer(logDrainerURL, applicationName, serverName string) (storer, error) {
+func NewStorer(logDrainerURL string, opts ...OptionFunc) (storer.Storer, error) {
 	if logDrainerURL == "" {
 		return nil, fmt.Errorf("missing or empty logDrainerURL")
 	}
@@ -73,12 +80,14 @@ func newLogDrainerStorer(logDrainerURL, applicationName, serverName string) (sto
 	if err != nil {
 		return nil, fmt.Errorf("invalid URL '%s': %v", logDrainerURL, err)
 	}
-	storer := &logDrainerStorer{
-		Client:          &http.Client{},
-		logDrainerURL:   parsedURL,
-		applicationName: applicationName,
-		serverName:      serverName,
+	s := &logDrainerStorer{
+		Client:        &http.Client{},
+		logDrainerURL: parsedURL,
 	}
-
-	return storer, nil
+	for _, o := range opts {
+		if o(s) != nil {
+			return nil, err
+		}
+	}
+	return s, nil
 }

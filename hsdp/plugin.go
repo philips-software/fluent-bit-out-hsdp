@@ -15,13 +15,15 @@ import (
 
 	"github.com/fluent/fluent-bit-go/output"
 	"github.com/google/uuid"
+	"github.com/philips-software/fluent-bit-out-hsdp/logdrainer"
+	"github.com/philips-software/fluent-bit-out-hsdp/storer"
 	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/philips-software/go-hsdp-api/logging"
 )
 
 var (
 	plugin         Plugin = &fluentPlugin{}
-	client         storer
+	client         storer.Storer
 	queue          chan logging.Resource
 	useCustomField bool
 	ignoreTLS      bool
@@ -41,10 +43,6 @@ type Plugin interface {
 	NewDecoder(data unsafe.Pointer, length int) *output.FLBDecoder
 	Send(values []logging.Resource) error
 	Exit(code int)
-}
-
-type storer interface {
-	StoreResources(messages []logging.Resource, count int) (*logging.StoreResponse, error)
 }
 
 func (p *fluentPlugin) Environment(ctx unsafe.Pointer, key string) string {
@@ -184,7 +182,10 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	}
 
 	if logdrainURL != "" {
-		client, err = newLogDrainerStorer(logdrainURL, logdrainApplicationName, logdrainServerName)
+		client, err = logdrainer.NewStorer(logdrainURL,
+			logdrainer.WithApplicationName(logdrainApplicationName),
+			logdrainer.WithServerName(logdrainServerName),
+			logdrainer.WithDebug(enableDebug))
 		if err != nil {
 			fmt.Printf("[out-hsdp] configuration error: %v\n", err)
 			plugin.Unregister(ctx)
