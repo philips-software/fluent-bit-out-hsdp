@@ -16,7 +16,9 @@ import (
 
 type logDrainerStorer struct {
 	*http.Client
-	logDrainerURL *url.URL
+	logDrainerURL   *url.URL
+	applicationName string
+	serverName      string
 }
 
 func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int) (*logging.StoreResponse, error) {
@@ -37,7 +39,13 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 		syslogMessage.SetVersion(1)
 		syslogMessage.SetProcID("[APP/PROC/FLUENT-BIT-OUT-HSDP/0]")
 		syslogMessage.SetAppname(msg.ApplicationName)
+		if l.applicationName != "" {
+			syslogMessage.SetAppname(l.applicationName)
+		}
 		syslogMessage.SetHostname(msg.ServerName)
+		if l.serverName != "" {
+			syslogMessage.SetHostname(l.serverName)
+		}
 		syslogMessage.SetParameter("fluent-bit-out-hsdp", "taskId", msg.ApplicationInstance)
 		syslogMessage.SetMessage(string(decoded))
 		message, _ := syslogMessage.String()
@@ -58,7 +66,7 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 	return logResponse, nil
 }
 
-func newLogDrainerStorer(logDrainerURL string) (storer, error) {
+func newLogDrainerStorer(logDrainerURL, applicationName, serverName string) (storer, error) {
 	if logDrainerURL == "" {
 		return nil, fmt.Errorf("missing or empty logDrainerURL")
 	}
@@ -67,8 +75,10 @@ func newLogDrainerStorer(logDrainerURL string) (storer, error) {
 		return nil, fmt.Errorf("invalid URL '%s': %v", logDrainerURL, err)
 	}
 	storer := &logDrainerStorer{
-		Client:        &http.Client{},
-		logDrainerURL: parsedURL,
+		Client:          &http.Client{},
+		logDrainerURL:   parsedURL,
+		applicationName: applicationName,
+		serverName:      serverName,
 	}
 
 	return storer, nil

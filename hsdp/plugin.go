@@ -98,6 +98,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	idmURL := plugin.Environment(ctx, "IdmUrl")
 	iamURL := plugin.Environment(ctx, "IamUrl")
 	logdrainURL := plugin.Environment(ctx, "LogdrainUrl")
+	logdrainApplicationName := plugin.Environment(ctx, "LogdrainApplicationName")
+	logdrainServerName := plugin.Environment(ctx, "LogdrainServerName")
 
 	var err error
 
@@ -182,7 +184,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	}
 
 	if logdrainURL != "" {
-		client, err = newLogDrainerStorer(logdrainURL)
+		client, err = newLogDrainerStorer(logdrainURL, logdrainApplicationName, logdrainServerName)
 		if err != nil {
 			fmt.Printf("[out-hsdp] configuration error: %v\n", err)
 			plugin.Unregister(ctx)

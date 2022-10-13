@@ -70,9 +70,11 @@ You can reuse an existing Cloud foundry logdrainer endpoint to ship your logs to
 that you only need the Logdrain URL itself, no other configuration. This URL is considered
 a credential so care should be taken to protect it though.
 
-| Key         | Description          | Environment variable | Required |
-|-------------|----------------------|----------------------|----------|
-| LogdrainUrl | The HSP Logdrain URL | HSDP_LOGDRAIN_URL    | Optional |
+| Key                     | Description                 | Environment variable           | Required |
+|-------------------------|-----------------------------|--------------------------------|----------|
+| LogdrainUrl             | The HSP Logdrain URL        | HSDP_LOGDRAIN_URL              | Optional |
+ | LogdrainApplicationName | The Application name to use | HSDP_LOGDRAIN_APPLICATION_NAME | Optional |
+| LogdrainServerName      | The Server name to use      | HSDP_LOGDRAIN_SERVER_NAME      | Optional |
 
 
 > Environment variable values take precedence over those in configuration files.
