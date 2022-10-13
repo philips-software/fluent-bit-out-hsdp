@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0
+
+- Switch to our own cadence release
+- Logdrainer: support setting application and server name
+
 ## 1.9.9.2
 
 - Upgrade to flient-bit 1.9.9
