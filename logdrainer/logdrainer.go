@@ -45,7 +45,7 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 			syslogMessage.SetAppname(l.applicationName)
 		}
 		if l.serverName != "" {
-			syslogMessage.SetHostname(fmt.Sprintf("%s.fluent-bit.%s", l.applicationName, l.serverName))
+			syslogMessage.SetHostname(fmt.Sprintf("%s.fluent-bit.%s", l.serverName, l.applicationName))
 		}
 		syslogMessage.SetParameter("fluent-bit-out-hsdp", "taskId", msg.ApplicationInstance)
 		syslogMessage.SetParameter("fluent-bit-out-hsdp", "applicationName", l.applicationName)
