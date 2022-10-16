@@ -68,6 +68,7 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 			_, _ = fmt.Fprintf(os.Stderr, "failed to send log: %v %v", resp, err)
 		}
 		if resp != nil {
+			_, _ = io.Copy(io.Discard, resp.Body)
 			_ = resp.Body.Close()
 		}
 	}
