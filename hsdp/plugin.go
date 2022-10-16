@@ -206,11 +206,12 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		fmt.Printf("[out-hsdp] build: %s\n", info.String())
 	}
 
-	queue = make(chan logging.Resource)
+	queue = make(chan logging.Resource, batchSize)
 
 	go func() {
 		var count int
 		resources := make([]logging.Resource, batchSize)
+		fmt.Printf("[out-hsdp] starting worker\n")
 
 		for {
 			select {
@@ -291,13 +292,13 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 
 		js, err := createResource(timeStamp, C.GoString(tag), record)
 		if err != nil {
-			fmt.Printf("%v\n", err)
+			fmt.Printf("[out-hsdp]: error creating resource: %v\n", err)
 			// DO NOT RETURN HERE because one message has an error when json is
 			// generated, but a retry would fetch ALL messages again. Instead, an
 			// error should be printed to console
 			continue
 		}
-		queue <- *js
+		queue <- js
 	}
 	return output.FLB_OK
 }
@@ -311,7 +312,9 @@ func mapReturnDelete(m *map[string]interface{}, key, defaultValue string) string
 	return out
 }
 
-func createResource(timestamp time.Time, tag string, record map[interface{}]interface{}) (*logging.Resource, error) {
+func createResource(timestamp time.Time, tag string, record map[interface{}]interface{}) (logging.Resource, error) {
+	var resource logging.Resource
+
 	m := make(map[string]interface{})
 	// convert timestamp to RFC3339Nano which is logstash format
 	m["@timestamp"] = timestamp.UTC().Format(time.RFC3339Nano)
@@ -331,14 +334,12 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 	}
 	msg, err := json.Marshal(m)
 	if err != nil {
-		return nil, fmt.Errorf("[out-hsdp] error creating message for hsdp-logging: %v", err)
+		return resource, fmt.Errorf("[out-hsdp] error creating message for hsdp-logging: %v", err)
 	}
-
-	var resource logging.Resource
 
 	// Do we have a native LogEvent?
 	if err = json.Unmarshal(msg, &resource); err == nil && resource.Valid() {
-		return &resource, nil
+		return resource, nil
 	}
 
 	id, _ := uuid.NewRandom()
@@ -366,7 +367,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 
 	msg, err = json.Marshal(m)
 	if err != nil {
-		return nil, fmt.Errorf("error creating message for hsdp-logging: %v", err)
+		return resource, fmt.Errorf("error creating message for hsdp-logging: %v", err)
 	}
 
 	custom := json.RawMessage{}
@@ -403,7 +404,7 @@ func createResource(timestamp time.Time, tag string, record map[interface{}]inte
 		resource.Custom = msg
 	}
 
-	return &resource, nil
+	return resource, nil
 }
 
 //export FLBPluginExit
