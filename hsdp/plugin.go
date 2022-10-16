@@ -262,7 +262,7 @@ func printError(resp *logging.StoreResponse, err error) {
 
 func flushResources(resources []logging.Resource, count int) (*logging.StoreResponse, error) {
 	if drop {
-		return nil, fmt.Errorf("[out-hsdp] dropping %d resources on purpose\n", count)
+		return nil, fmt.Errorf("[out-hsdp] dropping %d resources on purpose", count)
 	}
 	return client.StoreResources(resources, count)
 }
