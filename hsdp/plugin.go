@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"runtime/debug"
 	"strings"
@@ -214,6 +215,12 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	go func() {
 		var count int
 		resources := make([]logging.Resource, batchSize)
+		if enableDebug {
+			fmt.Printf("[out-hsdp] starting profiler at port 6060\n")
+			go func() {
+				_ = http.ListenAndServe("0.0.0.0:6060", nil)
+			}()
+		}
 		fmt.Printf("[out-hsdp] starting worker\n")
 
 		for {
