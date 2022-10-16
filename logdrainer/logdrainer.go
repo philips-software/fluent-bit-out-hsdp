@@ -67,6 +67,9 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 		if err != nil || resp == nil || resp.StatusCode != http.StatusOK {
 			_, _ = fmt.Fprintf(os.Stderr, "failed to send log: %v %v", resp, err)
 		}
+		if resp != nil {
+			_ = resp.Body.Close()
+		}
 	}
 	logResponse.Response = &http.Response{StatusCode: http.StatusOK}
 	return logResponse, nil
