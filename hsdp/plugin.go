@@ -27,6 +27,7 @@ var (
 	queue          chan logging.Resource
 	useCustomField bool
 	ignoreTLS      bool
+	drop           bool
 )
 
 const (
@@ -98,11 +99,13 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	logdrainURL := plugin.Environment(ctx, "LogdrainUrl")
 	logdrainApplicationName := plugin.Environment(ctx, "LogdrainApplicationName")
 	logdrainServerName := plugin.Environment(ctx, "LogdrainServerName")
+	dropMessages := plugin.Environment(ctx, "Drop")
 
 	var err error
 
 	useCustomField = customField == "true" || customField == "yes" || customField == "1" // TODO: remove global
 	ignoreTLS = noTLS == "true" || noTLS == "yes" || noTLS == "1"
+	drop = dropMessages == "true" || dropMessages == "yes" || dropMessages == "1"
 	enableDebug := debugging == "true" || debugging == "yes" || debugging == "1"
 
 	c := &http.Client{
@@ -258,6 +261,9 @@ func printError(resp *logging.StoreResponse, err error) {
 }
 
 func flushResources(resources []logging.Resource, count int) (*logging.StoreResponse, error) {
+	if drop {
+		return nil, fmt.Errorf("[out-hsdp] dropping %d resources on purpose\n", count)
+	}
 	return client.StoreResources(resources, count)
 }
 
