@@ -213,7 +213,7 @@ Finally, install the Helm chart:
 
 ```shell
 helm repo add philips-software https://philips-software.github.io/helm-charts/
-helm install my-fluent-bit-out-hsdp philips-software/fluent-bit-out-hsdp
+helm install my-fluent-bit-out-hsdp philips-software/fluent-bit-out-hsdp -n logging
 ```
 
 If the credentials are correct you should now see your Kubernetes cluster logs in the HSDP Logging system.
