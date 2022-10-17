@@ -147,10 +147,10 @@ The below filter definition shows an example of assigning fields
 [filter]
     Name modify
     Match *
-    Copy container_name app_name
-    Copy container_name service_name
-    Copy component_name component
-    Copy container_id app_instance
+    Rename container_name app_name
+    Rename container_name service_name
+    Rename component_name component
+    Rename container_id app_instance
 ```
 
 > Remaining fields will be rendered to a JSON hash and assigned to `logData.Message`
@@ -212,8 +212,8 @@ kubectl apply -f hsdp-logging-secret.yaml -n logging
 Finally, install the Helm chart:
 
 ```shell
-helm repo add loafoe https://loafoe.github.io/helm-charts/
-helm install fluent-bit-out-hsdp loafoe/fluent-bit-out-hsdp -n logging
+helm repo add philips-software https://philips-software.github.io/helm-charts/
+helm install my-fluent-bit-out-hsdp philips-software/fluent-bit-out-hsdp
 ```
 
 If the credentials are correct you should now see your Kubernetes cluster logs in the HSDP Logging system.
