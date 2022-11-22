@@ -40,9 +40,9 @@ These keys are relevant when using either SigningKey or Service identities
 
 | Key                | Description                                          | Environment variable         | Required |
 |--------------------|------------------------------------------------------|------------------------------|----------|
-| ProductKey         | The Product key of your proposition                  | HSDP\_PRODUCT\_KEY           | Optional |
-| Region             | The HSP Region (Cloud)                               | HSDP\_REGION                 | Optional |
-| Environment        | THE HSP Environment (Cloud)                          | HSDP\_ENVIRONMENT            | Optional |
+| ProductKey         | The Product key of your proposition                  | HSDP\_PRODUCT\_KEY           | Required |
+| Region             | The HSP Region (Cloud)                               | HSDP\_REGION                 | Required |
+| Environment        | THE HSP Environment (Cloud)                          | HSDP\_ENVIRONMENT            | Required |
 | IamUrl             | The IAM URL (On-Premise)                             | HSDP\_IAM\_URL               | Optional |
 | IdmUrl             | The IDM URL (On-Premise)                             | HSDP\_IDM\_URL               | Optional |
 | IngestorHost       | The HSDP ingestor host                               | HSDP\_INGESTOR\_HOST         | Optional |
