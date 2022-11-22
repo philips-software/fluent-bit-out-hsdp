@@ -41,6 +41,10 @@ These keys are relevant when using either SigningKey or Service identities
 | Key                | Description                                          | Environment variable         | Required |
 |--------------------|------------------------------------------------------|------------------------------|----------|
 | ProductKey         | The Product key of your proposition                  | HSDP\_PRODUCT\_KEY           | Optional |
+| Region             | The HSP Region (Cloud)                               | HSDP\_REGION                 | Optional |
+| Environment        | THE HSP Environment (Cloud)                          | HSDP\_ENVIRONMENT            | Optional |
+| IamUrl             | The IAM URL (On-Premise)                             | HSDP\_IAM\_URL               | Optional |
+| IdmUrl             | The IDM URL (On-Premise)                             | HSDP\_IDM\_URL               | Optional |
 | IngestorHost       | The HSDP ingestor host                               | HSDP\_INGESTOR\_HOST         | Optional |
 | Debug              | Shows request details when set to true               | HSDP\_DEBUG                  | Optional |
 | CustomField        | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD          | Optional |
@@ -57,10 +61,6 @@ These keys are relevant when using either SigningKey or Service identities
 
 | Key               | Description                              | Environment variable        | Required |
 |-------------------|------------------------------------------|-----------------------------|----------|
-| Region            | The HSP Region (Cloud)                   | HSDP\_REGION                | Optional |
-| Environment       | THE HSP Environment (Cloud)              | HSDP\_ENVIRONMENT           | Optional |
-| IamUrl            | The IAM URL (On-Premise)                 | HSDP\_IAM\_URL              | Optional |
-| IdmUrl            | The IDM URL (On-Premise)                 | HSDP\_IDM\_URL              | Optional |
 | ServiceId         | The Service ID to use for authentication | HSDP\_SERVICE\_ID           | Optional |
 | ServicePrivateKey | The Service private key                  | HSDP\_SERVICE\_PRIVATE\_KEY | Optional |
 
@@ -73,9 +73,8 @@ a credential so care should be taken to protect it though.
 | Key                     | Description                 | Environment variable           | Required |
 |-------------------------|-----------------------------|--------------------------------|----------|
 | LogdrainUrl             | The HSP Logdrain URL        | HSDP_LOGDRAIN_URL              | Optional |
- | LogdrainApplicationName | The Application name to use | HSDP_LOGDRAIN_APPLICATION_NAME | Optional |
+| LogdrainApplicationName | The Application name to use | HSDP_LOGDRAIN_APPLICATION_NAME | Optional |
 | LogdrainServerName      | The Server name to use      | HSDP_LOGDRAIN_SERVER_NAME      | Optional |
-
 
 > Environment variable values take precedence over those in configuration files.
 
