@@ -187,7 +187,9 @@ You can deploy fluent-bit and the HSDP plugin using a Helm chart
 ### Secret
 
 The chart will attempt to read credentials from an `hsdp-logging` Kubernetes secret which should reside
-in the namespace. An example `hsdp-logging-secret.yaml` is included below. Make sure you replace the values accordingly
+in the namespace. An example `hsdp-logging-secret.yaml` is included below. Make sure you replace the values accordingly.
+
+> **_NOTE:_**  All the values should be in the base64 encoded.
 
 ```yaml
 apiVersion: v1
@@ -208,11 +210,107 @@ Apply the secret to the right namepace:
 kubectl apply -f hsdp-logging-secret.yaml -n logging
 ```
 
-Finally, install the Helm chart:
+Add helm repo:
 
 ```shell
 helm repo add philips-software https://philips-software.github.io/helm-charts/
-helm install my-fluent-bit-out-hsdp philips-software/fluent-bit-out-hsdp -n logging
+```
+
+Download the helm chart
+```shell
+helm pull philips-software/fluent-bit-out-hsdp
+```
+
+Navigate to the download Helm chart and unzip.
+
+After unzip, open `fluent-bit-out-hsdp\values.yml` and add the enviroment details like:
+```yaml
+fluent-bit:
+  env:
+   - name: HSDP_REGION
+     valueFrom:
+       secretKeyRef:
+         key: region
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_ENVIRONMENT
+     valueFrom:
+       secretKeyRef:
+         key: environment
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_PRODUCT_KEY
+     valueFrom:
+       secretKeyRef:
+         key: product_key
+         name: hsdp-logging
+         optional: false
+   - name: HSDP_INGESTOR_HOST
+     valueFrom:
+       secretKeyRef:
+         key: ingestor_host
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_SHARED_KEY
+     valueFrom:
+       secretKeyRef:
+         key: shared_key
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_SECRET_KEY
+     valueFrom:
+       secretKeyRef:
+         key: secret_key
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_SERVICE_ID
+     valueFrom:
+       secretKeyRef:
+         key: service_id
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_SERVICE_PRIVATE_KEY
+     valueFrom:
+       secretKeyRef:
+         key: service_private_key
+         name: hsdp-logging
+         optional: true
+```
+
+You can skip the unwanted fields from above yaml. For e.g, if you are going to use secret_key and shared_key based authentication, then only fields required are: 
+```yaml
+fluent-bit:
+  env:
+   - name: HSDP_PRODUCT_KEY
+     valueFrom:
+       secretKeyRef:
+         key: product_key
+         name: hsdp-logging
+         optional: false
+   - name: HSDP_INGESTOR_HOST
+     valueFrom:
+       secretKeyRef:
+         key: ingestor_host
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_SHARED_KEY
+     valueFrom:
+       secretKeyRef:
+         key: shared_key
+         name: hsdp-logging
+         optional: true
+   - name: HSDP_SECRET_KEY
+     valueFrom:
+       secretKeyRef:
+         key: secret_key
+         name: hsdp-logging
+         optional: true
+```
+
+Install the Helm chart
+
+```shell
+helm install my-fluent-bit-out-hsdp fluent-bit-out-hsdp -n logging
 ```
 
 If the credentials are correct you should now see your Kubernetes cluster logs in the HSDP Logging system.
