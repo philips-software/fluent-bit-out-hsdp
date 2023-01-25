@@ -9,7 +9,7 @@ jobs:
   build_and_push:
     strategy:
       matrix:
-        variant: [latest, debug, initcontainer]
+        variant: [latest, debug]
     name: Build and push ${{ matrix.variant }} docker image
     runs-on: ubuntu-latest
 
