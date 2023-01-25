@@ -120,7 +120,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./Dockerfile.initcontainer
+          file: ./initcontainer/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: philipssoftware/fluent-bit-out-hsdp-init:${{ steps.vars.outputs.tag }},docker.na1.hsdp.io/philipssoftware/fluent-bit-out-hsdp-init:${{ steps.vars.outputs.tag }}
