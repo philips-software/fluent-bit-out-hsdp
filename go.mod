@@ -6,7 +6,7 @@ require (
 	github.com/fluent/fluent-bit-go v0.0.0-20220311094233-780004bf5562
 	github.com/google/uuid v1.3.0
 	github.com/influxdata/go-syslog/v2 v2.0.1
-	github.com/philips-software/go-hsdp-api v0.78.7
+	github.com/philips-software/go-hsdp-api v0.79.0
 )
 
 require (

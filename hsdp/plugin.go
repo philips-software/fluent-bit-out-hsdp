@@ -143,17 +143,16 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 		validCreds = true
 	}
 	if serviceID != "" && servicePrivateKey != "" {
-		debugLog := ""
-		if enableDebug {
-			debugLog = "/dev/stderr"
-		}
-		iamClient, err := iam.NewClient(nil, &iam.Config{
+		cfg := &iam.Config{
 			Region:      region,
 			Environment: environment,
 			IDMURL:      idmURL,
 			IAMURL:      iamURL,
-			DebugLog:    debugLog,
-		})
+		}
+		if enableDebug {
+			cfg.DebugLog = os.Stderr
+		}
+		iamClient, err := iam.NewClient(nil, cfg)
 		if err != nil {
 			fmt.Printf("[out-hsdp] invalid service credentials: %v\n", err)
 			plugin.Exit(1)
