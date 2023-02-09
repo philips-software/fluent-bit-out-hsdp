@@ -51,6 +51,10 @@ func (l *logDrainerStorer) StoreResources(messages []logging.Resource, count int
 		syslogMessage.SetParameter("fluent-bit-out-hsdp", "applicationName", l.applicationName)
 		syslogMessage.SetParameter("fluent-bit-out-hsdp", "serverName", l.serverName)
 		syslogMessage.SetMessage(string(decoded))
+		if msg.TraceID != "" || msg.SpanID != "" { // Construct a CustomLogEvent to propagate these
+			customLogEvent := fmt.Sprintf("%s|CustomLogEvent|%s|%s|%s|%s|%s", msg.Severity, msg.TransactionID, msg.TraceID, msg.SpanID, msg.Component, string(decoded))
+			syslogMessage.SetMessage(customLogEvent)
+		}
 		message, _ := syslogMessage.String()
 		if l.debug {
 			fmt.Printf("[out-hsdp] RFC5424: %s\n", message)
