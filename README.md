@@ -170,7 +170,7 @@ docker run --rm \
     -e HSDP_ENVIRONMENT=client-test \
     -e HSDP_SERVICE_ID=my.service.id@app.prop.philips-healthsuite.com \
     -e HSDP_SERVICE_PRIVATE_KEY="$(cat service_private_key.pem)" \
-    -it philipssoftware/fluent-bit-out-hsdp:latest
+    -it ghcr.io/philips-software/fluent-bit-out-hsdp:latest
 ```
 
 Once the above is running you can start other Docker containers and 
