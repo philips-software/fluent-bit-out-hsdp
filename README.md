@@ -204,7 +204,7 @@ data:
   ingestor_host: aHR0cHM6Ly9sb2dpbmdlc3RvcjItY2xpZW50LXRlc3QuZXUtd2VzdC5waGlsaXBzLWhlYWx0aHN1aXRlLmNvbQ==
 ```
 
-Apply the secret to the right namepace:
+Apply the secret to the right namepace (for Fiesta this is `kube-system`):
 
 ```shell
 kubectl apply -f hsdp-logging-secret.yaml -n logging
