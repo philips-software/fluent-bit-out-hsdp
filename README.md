@@ -49,8 +49,8 @@ These keys are relevant when using either SigningKey or Service identities
 | Debug              | Shows request details when set to true               | HSDP\_DEBUG                  | Optional |
 | CustomField        | Adds the field hash to custom field when set to true | HSDP\_CUSTOM\_FIELD          | Optional |
 | InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure!      | HSDP\_INSECURE\_SKIP\_VERIFY | Optional |
-| SynchronousFlush   | Flushes log messages synchronously without batching  |                              | Optional |
-| RetryOnError       | Returns retry to FLB if flush fails. Applicable only when *SynchronousFlush* option is set | | Optional | 
+| SynchronousFlush   | Flushes log messages synchronously without batching. By default this is set to *false*  |   | Optional |
+| RetryOnError       | Returns retry to FLB if flush fails. Applicable only when *SynchronousFlush* option is set. By default this is set to *false* | | Optional | 
 
 ### Signing keys
 
