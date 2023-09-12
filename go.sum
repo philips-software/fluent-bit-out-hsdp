@@ -28,8 +28,8 @@ github.com/influxdata/go-syslog/v2 v2.0.1/go.mod h1:hjvie1UTaD5E1fTnDmxaCw8RRDrT
 github.com/leodido/go-urn v1.2.4 h1:XlAE/cm/ms7TE/VMVoduSpNBoyc2dOxHs5MZSwAN63Q=
 github.com/leodido/go-urn v1.2.4/go.mod h1:7ZrI8mTSeBSHl/UaRyKQW1qZeMgak41ANeCNaVckg+4=
 github.com/leodido/ragel-machinery v0.0.0-20181214104525-299bdde78165/go.mod h1:WZxr2/6a/Ar9bMDc2rN/LJrE/hF6bXE4LPyDSIxwAfg=
-github.com/philips-software/go-hsdp-api v0.82.3 h1:wXhFNRuwE6u1M0pkSdRpqsPdAUb6JLGHBlVeF/+ATzw=
-github.com/philips-software/go-hsdp-api v0.82.3/go.mod h1:JbSWbEfQVB7Ei8wov4C2zPO5N1+Wr9bha4urcfxddw4=
+github.com/philips-software/go-hsdp-api v0.82.4 h1:lYIc9OT8Ua9g7vubamClh7WEsMU57ohcAm6nzkAeOp0=
+github.com/philips-software/go-hsdp-api v0.82.4/go.mod h1:JbSWbEfQVB7Ei8wov4C2zPO5N1+Wr9bha4urcfxddw4=
 github.com/philips-software/go-hsdp-signer v1.4.0 h1:yg7UILhmI4xJhr/tQiAiQwJL0EZFvLuMqpH2GZ9ygY4=
 github.com/philips-software/go-hsdp-signer v1.4.0/go.mod h1:/QehZ/+Aks2t1TFpjhF/7ZSB8PJIIJHzLc03rOqwLw0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
