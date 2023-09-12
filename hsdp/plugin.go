@@ -23,12 +23,14 @@ import (
 )
 
 var (
-	plugin         Plugin = &fluentPlugin{}
-	client         storer.Storer
-	queue          chan logging.Resource
-	useCustomField bool
-	ignoreTLS      bool
-	drop           bool
+	plugin          Plugin = &fluentPlugin{}
+	client          storer.Storer
+	queue           chan logging.Resource
+	useCustomField  bool
+	ignoreTLS       bool
+	drop            bool
+	synchronousMode bool
+	retryEnabled    bool
 )
 
 const (
@@ -101,6 +103,8 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	logdrainApplicationName := plugin.Environment(ctx, "LogdrainApplicationName")
 	logdrainServerName := plugin.Environment(ctx, "LogdrainServerName")
 	dropMessages := plugin.Environment(ctx, "Drop")
+	synchronous := plugin.Environment(ctx, "SynchronousFlush")
+	retry := plugin.Environment(ctx, "RetryOnError")
 
 	var err error
 
@@ -108,6 +112,21 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	ignoreTLS = noTLS == "true" || noTLS == "yes" || noTLS == "1"
 	drop = dropMessages == "true" || dropMessages == "yes" || dropMessages == "1"
 	enableDebug := debugging == "true" || debugging == "yes" || debugging == "1"
+	synchronousMode = synchronous == "true" || synchronous == "yes" || synchronous == "1"
+	retryEnabled = retry == "true" || retry == "yes" || retry == "1"
+
+	if !synchronousMode && retryEnabled {
+		fmt.Printf("Retry is supported only in synchronouse mode. Resetting to false\n")
+		retryEnabled = false
+	}
+
+	if synchronousMode {
+		fmt.Printf("Synchronous flush mode enabled\n")
+	}
+
+	if retryEnabled {
+		fmt.Printf("Retry on error enabled\n")
+	}
 
 	c := &http.Client{
 		Transport: &http.Transport{
@@ -273,10 +292,24 @@ func flushResources(resources []logging.Resource, count int) (*logging.StoreResp
 	return client.StoreResources(resources, count)
 }
 
+func flushResource(resource logging.Resource) (*logging.StoreResponse, error) {
+
+	res := make([]logging.Resource, 1)
+	res[0] = resource
+	resp, err := client.StoreResources(res, 1)
+	if err != nil {
+		printError(resp, err)
+	} else {
+		fmt.Printf("[out-hsdp] Flushed 1 resource\n")
+	}
+	return resp, err
+}
+
 //export FLBPluginFlush
 func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 	// do something with the data
 	var ret int
+	var status int = output.FLB_OK
 	var ts interface{}
 	var record map[interface{}]interface{}
 
@@ -310,9 +343,18 @@ func FLBPluginFlush(data unsafe.Pointer, length C.int, tag *C.char) int {
 			// error should be printed to console
 			continue
 		}
-		queue <- js
+		if synchronousMode {
+			_, flusherr := flushResource(js)
+			if retryEnabled && flusherr != nil {
+				fmt.Printf("[out-hsdp] Failed to flush, returning Retry..\n")
+				status = output.FLB_RETRY
+				break
+			}
+		} else {
+			queue <- js
+		}
 	}
-	return output.FLB_OK
+	return status
 }
 
 func mapReturnDelete(m *map[string]interface{}, key, defaultValue string) string {
