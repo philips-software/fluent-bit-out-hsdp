@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	_ "net/http/pprof"
+	"net/url"
 	"os"
 	"runtime/debug"
 	"strings"
@@ -84,6 +85,15 @@ func FLBPluginRegister(ctx unsafe.Pointer) int {
 	return output.FLBPluginRegister(ctx, "hsdp", "HSDP logging output plugin")
 }
 
+func GetProxyUrl(proxyUrl string) func(*http.Request) (*url.URL, error) {
+	if proxyUrl != "" {
+		return func(req *http.Request) (*url.URL, error) {
+			return url.Parse(proxyUrl)
+		}
+	}
+	return http.ProxyFromEnvironment
+}
+
 //export FLBPluginInit
 func FLBPluginInit(ctx unsafe.Pointer) int {
 	region := plugin.Environment(ctx, "Region")
@@ -105,6 +115,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 	dropMessages := plugin.Environment(ctx, "Drop")
 	synchronous := plugin.Environment(ctx, "SynchronousFlush")
 	retry := plugin.Environment(ctx, "RetryOnError")
+	proxyUrl := plugin.Environment(ctx, "Proxy")
 
 	var err error
 
@@ -130,7 +141,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 
 	c := &http.Client{
 		Transport: &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
+			Proxy: GetProxyUrl(proxyUrl),
 		},
 	}
 	if ignoreTLS {

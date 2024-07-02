@@ -51,6 +51,7 @@ These keys are relevant when using either SigningKey or Service identities
 | InsecureSkipVerify | Skip checking HSDP ingestor TLS cert. Insecure!      | HSDP\_INSECURE\_SKIP\_VERIFY | Optional |
 | SynchronousFlush   | Flushes log messages synchronously without batching. By default this is set to *false*  |   | Optional |
 | RetryOnError       | Returns retry to FLB if flush fails. Applicable only when *SynchronousFlush* option is set. By default this is set to *false* | | Optional | 
+| Proxy              | HTTP Proxy URL in case there is a proxy redirection required             |  | Optional |
 
 ### Signing keys
 
