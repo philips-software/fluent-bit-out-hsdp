@@ -1,7 +1,7 @@
 package storer
 
 import (
-	"github.com/philips-software/go-hsdp-api/logging"
+	"github.com/dip-software/go-dip-api/logging"
 )
 
 type Storer interface {

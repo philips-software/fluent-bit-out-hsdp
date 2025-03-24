@@ -12,7 +12,7 @@ import (
 
 	"github.com/influxdata/go-syslog/v2/rfc5424"
 	"github.com/philips-software/fluent-bit-out-hsdp/storer"
-	"github.com/philips-software/go-hsdp-api/logging"
+	"github.com/dip-software/go-dip-api/logging"
 )
 
 type logDrainerStorer struct {
