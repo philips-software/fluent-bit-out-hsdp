@@ -3,7 +3,7 @@ module github.com/philips-software/fluent-bit-out-hsdp
 go 1.24.0
 
 require (
-	github.com/dip-software/go-dip-api v0.93.0
+	github.com/dip-software/go-dip-api v0.93.1
 	github.com/fluent/fluent-bit-go v0.0.0-20220311094233-780004bf5562
 	github.com/google/uuid v1.6.0
 	github.com/influxdata/go-syslog/v2 v2.0.1

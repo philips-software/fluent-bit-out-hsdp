@@ -2,8 +2,8 @@ github.com/cenkalti/backoff/v4 v4.3.0 h1:MyRJ/UdXutAwSAT+s3wNd7MfTIcy71VQueUuFK3
 github.com/cenkalti/backoff/v4 v4.3.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/dip-software/go-dip-api v0.93.0 h1:8OUbb4v0VhVsjmthE9oMePj7WPC6WfJlw77XZNawi9Y=
-github.com/dip-software/go-dip-api v0.93.0/go.mod h1:XduaN7oR6aUIqUzsEPSQuowLAcElnYSC527mXJK9ts0=
+github.com/dip-software/go-dip-api v0.93.1 h1:1U3k9Oy5YjEtw38qFQcpx3Phpf/m5/5ZH1ioi+4zHKE=
+github.com/dip-software/go-dip-api v0.93.1/go.mod h1:XduaN7oR6aUIqUzsEPSQuowLAcElnYSC527mXJK9ts0=
 github.com/dip-software/go-dip-signer v1.6.0 h1:Yqp1rBfnvbJcQWFZ2weKY0wGTo0QcBHJVGDXu/p8fjQ=
 github.com/dip-software/go-dip-signer v1.6.0/go.mod h1:PRUE+JqVunb2D3iMT5dVElODe6e0sNWtpEFF3T+eVpU=
 github.com/fluent/fluent-bit-go v0.0.0-20220311094233-780004bf5562 h1:x2JSiiQ0Q7JCyQXOYnTWdYYiSAuKs/8KwEFBdtxLfKg=
